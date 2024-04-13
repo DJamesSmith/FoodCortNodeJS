@@ -82,7 +82,7 @@ const sendOTPviaSMS = async (contact, otp) => {
         // console.log(`OTP sent to ${contact}: ${message.sid}`)
         return true
     } catch (error) {
-        console.error(`Error sending OTP to ${contact}:\n${error}`)
+        console.error(`Error sending OTP to ${contact}: ${error}`)
         return false
     }
 }

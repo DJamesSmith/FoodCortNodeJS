@@ -1,9 +1,9 @@
 const config = {
     secret_jwt: "thisismysecretkey",
     twilio: {
-        accountSid: "AC928622c75733c952f8affaf9ca4eb71c",
-        authToken: "7a947305f552f5c6bdd49bc2e29bb925",
-        phoneNumber: "+18319200814"
+        accountSid: "ACe095ce7039b0081e63cfed066fe31b2a",
+        authToken: "aacea7f781699fbf7064026b01f9aa27",
+        phoneNumber: "+12184801832"
     },
     otpExpirationDuration: 180000,       // 3 minutes in milliseconds
     nodemailer: {
