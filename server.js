@@ -86,7 +86,7 @@ app.use('/api', apiAdminUserRoute)
 
 
 // Client-User
-const userRoute = require('./router/userRouter')
+const userRoute = require('./router/UserRouter')
 app.use('/api', userRoute)
 
 // ---------------------------------------------------------------------------
