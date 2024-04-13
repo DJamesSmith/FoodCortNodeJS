@@ -1,0 +1,48 @@
+{
+  "name": "foodcort_server",
+  "version": "1.0.0",
+  "description": "FoodCort API server for managing user and admin functionalities, enabling efficient food delivery service management with image upload and CRUD operations.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DJamesSmith/FoodCortBackend.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "ExpressJS",
+    "ReactNative",
+    "RestAPI",
+    "CRUD",
+    "MulterForImageUploads"
+  ],
+  "author": "Dion James Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DJamesSmith/FoodCortBackend/issues"
+  },
+  "homepage": "https://github.com/DJamesSmith/FoodCortBackend#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "connect-flash": "^0.1.1",
+    "connect-mongodb-session": "^5.0.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.4",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13",
+    "twilio": "^5.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

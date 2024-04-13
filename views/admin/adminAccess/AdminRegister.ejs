@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> <%=title%> </title>
+
+    <link rel="stylesheet" type="text/css" href="/adminStyle.css">
+
+    <style>
+        input {
+            margin-top: 0.5em;
+        }
+        .mb-1 {
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register">
+        <h1> ADMIN Registration </h1>
+        <% if (message.length> 0) { %>
+            <div class="alert alert-success">
+                <strong style="color: white;">
+                    <%= message %>
+                </strong>
+            </div>
+        <% } %>
+        <form style="color: white;" action="/admin/adminRegister" method="POST" enctype="multipart/form-data">
+            <!-- <input type="text" name="u" placeholder="Username" required="required" />
+            <input type="password" name="p" placeholder="Password" required="required" /> -->
+
+            <div class="mb-1">
+                <label> Name </label>
+                <input class="input-field" type="text" placeholder="Enter Name" name="adminName" required>
+            </div>
+
+            <div class="mb-1">
+                <label> Email </label>
+                <input class="input-field" type="email" placeholder="Enter Email" name="adminEmail" required>
+            </div>
+
+            <div class="mb-1">
+                <label> Password </label>
+                <input class="input-field" type="password" placeholder="Enter Password" name="adminPassword" required>
+            </div>
+
+            <div class="mb-1">
+                <label> Confirm Password </label>
+                <input class="input-field" type="password" placeholder="Confirm Password" name="adminPasswordConfirm" required>
+            </div>
+
+            <div class="mb-1">
+                <label> Image </label>
+                <input class="input-field" type="file" name="adminImage" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-large"> Register </button>
+        </form>
+
+        <h4 style="color: white; margin-top: 4em; text-align: center;"> Already have an account ? </h4>
+        <div style="margin-left: 5em;">
+            <a href="/admin/signIn" class="a-tag">
+                <span class="span-tag"></span>
+                <span class="span-tag"></span>
+                <span class="span-tag"></span>
+                <span class="span-tag"></span>
+                <b> Login </b>
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

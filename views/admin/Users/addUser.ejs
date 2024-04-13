@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<%-include("../common/header.ejs")%>
+
+    <body>
+        <div class="wrapper">
+            <%-include("../common/navbar.ejs")%>
+            <%-include("../common/sidebar.ejs")%>
+
+            <div class="content-wrapper">
+
+                <div class="content-header">
+                    <div class="container-fluid">
+
+                        <div class="row mb-2 mt-5">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">
+                                    <%=dashboardtitle%>
+                                </h1>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                                    <li class="breadcrumb-item active">Dashboard</li>
+                                    <li class="breadcrumb-item active"> Users </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+
+                    <% if (typeof error !== 'undefined' && error.length > 0) {%> 
+                        <div class="alert alert-danger">
+                            <%= error %>
+                        </div>
+                    <% } %>
+
+                    <div class="container mt-5">
+                        <h1 class="text-center mb-4"> Add New User </h1>
+
+                        <% if (message.length > 0) {%> 
+                            <div class="alert alert-success">
+                              <%= message %>
+                            </div>
+                        <% } %>
+
+                        <form action="/admin/createUser" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">First Name</label>
+                                <input type="text" class="form-control" placeholder="Enter First Name" name="first_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" placeholder="Enter Last Name" name="last_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Contact</label>
+                                <input type="text" class="form-control" placeholder="Enter Email / Phone number" name="contact" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Password</label>
+                                <input type="password" class="form-control" placeholder="Enter Password" name="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">Choose Image</label>
+                                <input class="form-control" type="file" id="formFile" name="profile_pic" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <%-include("../common/footer.ejs")%>
+        </div>
+        <%-include("../common/scripts.ejs")%>
+    </body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<%-include("common/header.ejs")%>
+
+    <body>
+        <div class="wrapper">
+            <%-include("common/navbar.ejs")%>
+            <%-include("common/sidebar.ejs")%>
+
+            <div class="content-wrapper">
+                <div class="content-header">
+                    <div class="container-fluid">
+
+                        <div class="row mb-2 mt-5">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">
+                                    <%=dashboardtitle%>
+                                </h1>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a href="/admin"> Home </a></li>
+                                    <li class="breadcrumb-item active"> Dashboard </li>
+                                    <li class="breadcrumb-item active"> About </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div>
+                    <div class="row mb-2">
+                        <div class="container mt-5">
+                            <p><span style="font-size: 20px;">The <b><span style="font-size: 24px;">foodcort_server</b></span> is an API server designed to support the FoodCort application, facilitating both user and admin functionalities. It serves as the backend infrastructure for managing various aspects of a food delivery service. Key features include user authentication, admin management, and CRUD operations for efficient management of food delivery operations. It leverages technologies such as NodeJS, ExpressJS, and MongoDB for building RESTful APIs. Additionally, it utilizes libraries like Multer for handling image uploads and bcryptjs for password hashing. The server is designed to work seamlessly with a corresponding frontend application, enabling a smooth user experience for customers and administrators alike. </span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <%-include("common/footer.ejs")%>
+        </div>
+        <%-include("common/scripts.ejs")%>
+    </body>
+
+</html>

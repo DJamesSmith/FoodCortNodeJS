@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> <%=title%> </title>
+
+    <link rel="stylesheet" type="text/css" href="/adminStyle.css">
+</head>
+
+<body>
+    <div class="login">
+        <h1> ADMIN Login </h1>
+        <% if (message.length > 0) { %>
+            <div style="margin-bottom: 1em;">
+                <strong class="input-checkbox">
+                    <%= message %>
+                </strong>
+            </div>
+        <% } %>
+        <form method="POST" action="/admin/adminLogin">
+            <input class="input-field" type="email" name="adminEmail" value="<%= data.adminEmail %>" placeholder="Email" required="required" />
+            <input class="input-field" type="password" name="adminPassword" value="<%= data.adminPassword %>" placeholder="Password" required="required" />
+            <span class="input-checkbox"> <input class="input-checkbox" type="checkbox" name="rememberme" /> Remember Me <p></p> </span>
+            <button type="submit" class="btn btn-primary btn-block btn-large"> Login </button>
+        </form>
+
+        <h4 style="color: white; margin-top: 8em; text-align: center;"> Don't have an account ? </h4>
+        <div>
+            <a href="/admin/signUp" class="a-tag">
+                <span class="span-tag"></span>
+                <span class="span-tag"></span>
+                <span class="span-tag"></span>
+                <span class="span-tag"></span>
+                <b> Register </b>
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

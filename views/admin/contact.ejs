@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<%-include("common/header.ejs")%>
+
+    <body>
+        <div class="wrapper">
+            <%-include("common/navbar.ejs")%>
+            <%-include("common/sidebar.ejs")%>
+
+            <div class="content-wrapper">
+                <div class="content-header">
+                    <div class="container-fluid">
+
+                        <div class="row mb-2 mt-5">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">
+                                    <%=dashboardtitle%>
+                                </h1>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a href="/admin"> Home </a></li>
+                                    <li class="breadcrumb-item active"> Dashboard </li>
+                                    <li class="breadcrumb-item active"> Contact </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div>
+                    <div class="row mb-2">
+                        <div class="container mt-5">
+                            <h3 class="text-center text-bold"> Hey there ! This project is created by <a href="https://github.com/DJamesSmith"> Dion James Smith </a>. </h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <%-include("common/footer.ejs")%>
+        </div>
+        <%-include("common/scripts.ejs")%>
+    </body>
+
+</html>
