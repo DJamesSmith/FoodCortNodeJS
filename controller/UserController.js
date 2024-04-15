@@ -68,19 +68,96 @@ const generateOTP = () => {
     return Math.floor(1000 + Math.random() * 9000)
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const lastOTPSendTime = {}
+const otpResendTime = config.otpResendTime * 60 * 1000
+
 // Send OTP via SMS
 const sendOTPviaSMS = async (contact, otp) => {
-    // console.log(`\n\n\nsendOTPviaPhoneNumber: ${contact} \tOTP: ${otp} \n`)
-    // console.log(`ToContact: ${contact}`)
     try {
-        const message = await client.messages.create({
-            body: `Your OTP for registration is: ${otp}`,
-            from: config.twilio.phoneNumber,
-            to: contact
-        })
+        const currentTime = new Date().getTime()
+        const lastSendTime = lastOTPSendTime[contact] || 0
+        const elapsedTime = currentTime - lastSendTime
 
-        // console.log(`OTP sent to ${contact}: ${message.sid}`)
-        return true
+        console.log('\ncurrentTime:', currentTime)
+        console.log('lastSendTime:', lastSendTime)
+        console.log('elapsedTime:', elapsedTime)
+
+        if (elapsedTime >= otpResendTime || !lastSendTime) {
+            const message = await client.messages.create({
+                body: `Your OTP for registration is: ${otp}`,
+                from: config.twilio.phoneNumber,
+                to: contact
+            })
+
+            lastOTPSendTime[contact] = currentTime
+            return true
+        } else {
+            const minutes = Math.floor((otpResendTime - elapsedTime) / (1000 * 60))
+            const seconds = Math.floor(((otpResendTime - elapsedTime) % (1000 * 60)) / 1000)
+            const timeLeft = `${minutes}:${seconds.toString().padStart(2, '0')}`
+
+            console.log('timeLeft:', timeLeft)
+            return `Resend OTP enables in ${timeLeft}`
+        }
     } catch (error) {
         console.error(`Error sending OTP to ${contact}: ${error}`)
         return false
@@ -90,26 +167,100 @@ const sendOTPviaSMS = async (contact, otp) => {
 // Send OTP via Email
 const sendOTPviaEmail = async (contact, otp) => {
     try {
-        // console.log(`\n\n\nsendOTPviaEmail: ${contact} \tOTP: ${otp} \n`)
+        const currentTime = new Date().getTime()
+        const lastSendTime = lastOTPSendTime[contact] || 0
+        const elapsedTime = currentTime - lastSendTime
 
-        const transporter = nodemailer.createTransport(config.nodemailer)
+        console.log('\ncurrentTime:', currentTime)
+        console.log('lastSendTime:', lastSendTime)
+        console.log('elapsedTime:', elapsedTime)
 
-        const mailOptions = {
-            from: config.nodemailer.auth.user,
-            to: contact,
-            subject: 'OTP for Registration',
-            text: `Your OTP for registration is: ${otp}`
+        if (elapsedTime >= otpResendTime || !lastSendTime) {
+            const transporter = nodemailer.createTransport(config.nodemailer)
+
+            const mailOptions = {
+                from: config.nodemailer.auth.user,
+                to: contact,
+                subject: 'OTP for Registration',
+                text: `Your OTP for registration is: ${otp}`
+            }
+
+            await transporter.sendMail(mailOptions)
+            lastOTPSendTime[contact] = currentTime
+            return true
+        } else {
+            const minutes = Math.floor((otpResendTime - elapsedTime) / (1000 * 60))
+            const seconds = Math.floor(((otpResendTime - elapsedTime) % (1000 * 60)) / 1000)
+            const timeLeft = `${minutes}:${seconds.toString().padStart(2, '0')}`
+
+            console.log('timeLeft:', timeLeft)
+            return `Resend OTP enables in ${timeLeft}`
         }
-
-        await transporter.sendMail(mailOptions)
-
-        // console.log(`OTP sent to ${contact}`)
-        return true
     } catch (error) {
         console.error('Error sending OTP via email:', error)
         return false
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Save OTP to DB
 const saveOtpToDB = async (contact, otp) => {
@@ -169,21 +320,23 @@ exports.register = async (req, res) => {
 
         const otp = generateOTP()
         const isEmail = /^\S+@\S+\.\S+$/.test(contact)
-        let otpSent = false
 
         const newOTP = await saveOtpToDB(contact, otp)
         if (!newOTP) {
             return res.status(400).json({ success: false, status: 400, message: `Failed to generate OTP for contact ${contact}` })
         }
 
+        let result
         if (isEmail) {
-            otpSent = await sendOTPviaEmail(contact, otp)
+            result = await sendOTPviaEmail(contact, otp)
         } else {
-            otpSent = await sendOTPviaSMS(contact, otp)
+            result = await sendOTPviaSMS(contact, otp)
         }
 
-        if (!otpSent) {
-            return res.status(400).json({ success: false, status: 400, message: `Failed to send OTP to contact ${contact}` })
+        if (typeof result === 'string') {
+            return res.status(400).json({ success: false, status: 400, message: result })
+        } else if (!result) {
+            return res.status(500).json({ success: false, status: 500, message: `Failed to send OTP to contact ${contact}` })
         }
 
         res.status(200).send({ success: true, status: 200, message: `OTP sent successfully to ${contact}` })
@@ -247,12 +400,12 @@ exports.login = async (req, res) => {
         if (!user.isVerified && user && (await bcryptjs.compare(password, user.password))) {
             const otp = generateOTP()
             const isEmail = /^\S+@\S+\.\S+$/.test(contact)
-            let otpSent = false
 
+            let result
             if (isEmail) {
-                otpSent = await sendOTPviaEmail(contact, otp)
+                result = await sendOTPviaEmail(contact, otp)
             } else {
-                otpSent = await sendOTPviaSMS(contact, otp)
+                result = await sendOTPviaSMS(contact, otp)
             }
 
             const newOTP = await saveOtpToDB(contact, otp)
@@ -260,8 +413,10 @@ exports.login = async (req, res) => {
                 return res.status(400).json({ success: false, status: 400, message: `Failed to generate OTP for contact ${contact}` })
             }
 
-            if (!otpSent) {
-                return res.status(500).json({ success: false, status: 500, message: 'Failed to send OTP' })
+            if (typeof result === 'string') {
+                return res.status(400).json({ success: false, status: 400, message: result })
+            } else if (!result) {
+                return res.status(500).json({ success: false, status: 500, message: `Failed to send OTP to contact ${contact}` })
             }
 
             const tokendata = await createToken(user._id)
@@ -351,23 +506,24 @@ exports.forgotPassword = async (req, res) => {
 
         const otp = generateOTP()
         const isEmail = /^\S+@\S+\.\S+$/.test(contact)
-        let otpSent = false
 
         const newOTP = await saveOtpToDB(contact, otp)
         if (!newOTP) {
             return res.status(400).json({ success: false, status: 400, message: `Failed to generate OTP for contact ${contact}` })
         }
 
+        let result
         if (isEmail) {
-            otpSent = await sendOTPviaEmail(contact, otp)
+            result = await sendOTPviaEmail(contact, otp)
         } else {
-            otpSent = await sendOTPviaSMS(contact, otp)
+            result = await sendOTPviaSMS(contact, otp)
         }
 
-        if (!otpSent) {
-            return res.status(500).json({ success: false, status: 500, message: 'Failed to send OTP' })
+        if (typeof result === 'string') {
+            return res.status(400).json({ success: false, status: 400, message: result })
+        } else if (!result) {
+            return res.status(500).json({ success: false, status: 500, message: `Failed to send OTP to contact ${contact}` })
         }
-
 
         res.status(200).json({ success: true, status: 200, message: `OTP sent successfully to contact ${contact}`, token: tokenData })
     } catch (error) {

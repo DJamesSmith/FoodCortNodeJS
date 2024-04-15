@@ -6,6 +6,7 @@ const config = {
         phoneNumber: "+12184801832"
     },
     otpExpirationDuration: 180000,       // 3 minutes in milliseconds
+    otpResendTime: 1.5,
     nodemailer: {
         service: 'Gmail',
         auth: {
