@@ -55,7 +55,7 @@ const securePassword = async (password) => {
 // Create token
 const createToken = async id => {
     try {
-        const token = await jwt.sign({ _id: id }, config.secret_jwt, { expiresIn: "1d" })
+        const token = await jwt.sign({ _id: id }, config.secret_jwt, { expiresIn: "180d" })
         return token
     } catch (error) {
         // res.status(400).send(error.message)
