@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer')
 const config = require('../config/config')
 const { User, passwordValidationMessages } = require('../model/User')
 const OTP = require('../model/OTP')
+const { imageToBase64 } = require('../utility/Base64Image')
 const client = twilio(config.twilio.accountSid, config.twilio.authToken, config.twilio.phoneNumber)
 let userDataTemp = {}
 
@@ -78,9 +79,9 @@ const sendOTPviaSMS = async (contact, otp) => {
         const lastSendTime = lastOTPSendTime[contact] || 0
         const elapsedTime = currentTime - lastSendTime
 
-        console.log('\ncurrentTime:', currentTime)
-        console.log('lastSendTime:', lastSendTime)
-        console.log('elapsedTime:', elapsedTime)
+        // console.log('\ncurrentTime:', currentTime)
+        // console.log('lastSendTime:', lastSendTime)
+        // console.log('elapsedTime:', elapsedTime)
 
         if (elapsedTime >= otpResendTime || !lastSendTime) {
             const message = await client.messages.create({
@@ -112,9 +113,9 @@ const sendOTPviaEmail = async (contact, otp) => {
         const lastSendTime = lastOTPSendTime[contact] || 0
         const elapsedTime = currentTime - lastSendTime
 
-        console.log('\ncurrentTime:', currentTime)
-        console.log('lastSendTime:', lastSendTime)
-        console.log('elapsedTime:', elapsedTime)
+        // console.log('\ncurrentTime:', currentTime)
+        // console.log('lastSendTime:', lastSendTime)
+        // console.log('elapsedTime:', elapsedTime)
 
         if (elapsedTime >= otpResendTime || !lastSendTime) {
             const transporter = nodemailer.createTransport(config.nodemailer)
@@ -178,7 +179,12 @@ exports.register = async (req, res) => {
 
         if (req.file) {
             profile_pic = req.file.filename
+            const filePath = `public/userUploads/${profile_pic}`
+            const base64Image = await imageToBase64(filePath)
+            profile_pic = base64Image
         }
+
+        console.log(`profile_pic: ${profile_pic}`)
 
         const capitalizedFirstName = first_name.charAt(0).toUpperCase() + first_name.slice(1)
         const capitalizedLastName = last_name.charAt(0).toUpperCase() + last_name.slice(1)
@@ -198,6 +204,8 @@ exports.register = async (req, res) => {
             profile_pic_originalname: req.file ? req.file.originalname : '',
             status: true
         })
+
+        console.log(`userDataTemp: ${userDataTemp}`)
 
         const otp = generateOTP()
         const isEmail = /^\S+@\S+\.\S+$/.test(contact)

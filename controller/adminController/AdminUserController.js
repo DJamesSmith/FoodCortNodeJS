@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs')
 const { User, passwordValidationMessages } = require('../../model/User')
+const { imageToBase64 } = require('../../utility/Base64Image')
 
 const validateInput = (first_name, last_name, contact, password) => {
     const errors = []
@@ -126,7 +127,13 @@ exports.createUser = async (req, res) => {
 
     if (req.file) {
         profile_pic = req.file.filename
+        profile_pic = req.file.filename
+        const filePath = `public/userUploads/${profile_pic}`
+        const base64Image = await imageToBase64(filePath)
+        profile_pic = base64Image
     }
+
+    console.log(`Admin_added_profile_pic: ${profile_pic}`)
 
     const capitalizedFirstName = first_name.charAt(0).toUpperCase() + first_name.slice(1)
     const capitalizedLastName = last_name.charAt(0).toUpperCase() + last_name.slice(1)
@@ -185,7 +192,11 @@ exports.updateUser = async (req, res) => {
         let profile_pic = ''
         if (req.file) {
             profile_pic = req.file.filename
+            const filePath = `public/userUploads/${profile_pic}`
+            const base64Image = await imageToBase64(filePath)
+            profile_pic = base64Image
         }
+        console.log(`Admin_updated_profile_pic: ${profile_pic}`)
 
         await User.findByIdAndUpdate(req.params.id, {
             first_name: req.body.first_name,
