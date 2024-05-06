@@ -1,27 +1,48 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const product = mongoose.Schema({
-    title: {
+const product = new mongoose.Schema({
+    productTitle: {
         type: String,
         required: true
     },
-    description: {
+    productDescription: {
         type: String,
         required: true
     },
-    price: {
+    productPrice: {
         type: String,
         required: true
     },
-    rating: {
+    productRating: {
         type: String,
         required: true
     },
-    kilocalories: {
+    productKiloCalories: {
         type: String,
         required: true
     },
-    duration: {
+    productDeliveryTime: {
+        type: String,
+        required: true
+    },
+    productIsLiked: {
+        type: String,
+        required: true
+    },
+    productLikesCount: {
+        type: Number,
+        default: 0
+    },
+    productUnlikesCount: {
+        type: Number,
+        default: 0
+    },
+    productQuantity: {
+        type: String,
+        required: true
+    },
+    initialProductQuantity: {
         type: String,
         required: true
     },
@@ -35,11 +56,27 @@ const product = mongoose.Schema({
     image_original_name: {
         type: String,
         required: false
-    }
+    },
+
+
+
+
+    comment: [{
+        type: Schema.Types.ObjectId,
+        ref: 'comment'
+    }],
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'category'
+    },
+    // extraingredient: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'extraingredient'
+    // },
 },
     {
         timestamps: true        // Automatically gives us a createdAt and updatedAt fields
     }
 )
 
-module.exports = mongoose.model("Product", product)
+module.exports = mongoose.model('product', product)

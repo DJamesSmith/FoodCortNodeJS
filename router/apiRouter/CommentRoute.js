@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const auth = require('../../middleware/auth')
 
-const productController = require('../../controller/apiController/ProductController')
+const commentController = require('../../controller/apiController/CommentController')
 
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
@@ -42,8 +42,12 @@ router.use(bodyParser.urlencoded({ extended: true }))
 
 // -------------------------- Multer --------------------------
 
-// GET - All Products
-router.get('/products', productController.allProducts)
+
+// GET - All Comments (Particular Product)
+router.get('/product/:productId/comments', auth, commentController.allCommentsForProduct)
+
+// POST - Comment
+router.post('/comment', auth, commentController.createComment)
 
 
 module.exports = router

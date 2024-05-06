@@ -29,7 +29,7 @@ const validateInput = (first_name, last_name, contact, password) => {
 }
 
 // Password checking method
-const securePassword = async (password) => {
+const securePassword = async password => {
     try {
         const passwordHash = await bcryptjs.hash(password, 10)
         return passwordHash

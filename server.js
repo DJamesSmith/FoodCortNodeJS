@@ -70,28 +70,38 @@ app.use('/admin', adminAuthRouter)
 
 // ---------- ADMIN ----------
 
+// Category
+const adminCategoryRoute = require('./router/templateRouter/AdminCategoryRouter')          // For Admin: GET, POST, PUT, DELETE
+app.use('/admin', adminCategoryRoute)
+const categoryRoute = require('./router/apiRouter/CategoryRoute')                          // For User: GET
+app.use('/api', categoryRoute)
 
 // Products
-// const adminProductRoute = require('./router/templateRouter/ProductRoute')                    // For Admin
-// app.use('/admin', adminProductRoute)
-// const adminProductRoute = require('./router/apiRouter/ProductRoute')                         // For Admin
-// app.use('/api', adminProductRoute)
+const adminProductRoute = require('./router/templateRouter/AdminProductRouter')          // For Admin: GET, POST, PUT, DELETE
+app.use('/admin', adminProductRoute)
+const productRoute = require('./router/apiRouter/ProductRoute')                          // For User fetch All Products
+app.use('/api', productRoute)
 
+// Comment
+const adminCommentRoute = require('./router/templateRouter/AdminCommentRouter')          // For Admin: GET, PUT, DELETE
+app.use('/admin', adminCommentRoute)
+const commentRoute = require('./router/apiRouter/CommentRoute')                          // For User fetch + Add Comments
+app.use('/api', commentRoute)
 
 // Admin-User: Authenticated to Create, Edit and Delete User
-const adminUserRoute = require('./router/templateRouter/AdminUserRoute')                          // For Admin
+const adminUserRoute = require('./router/templateRouter/AdminUserRoute')                     // For Admin
 app.use('/admin', adminUserRoute)
-const apiAdminUserRoute = require('./router/apiRouter/UserRoute')                                 // For ReactJS API
+const apiAdminUserRoute = require('./router/apiRouter/UserRoute')                            // For ReactNative API
 app.use('/api', apiAdminUserRoute)
 
 
 // Client-User
-const userRoute = require('./router/UserRouter')
+const userRoute = require('./router/UserRouter')                                              // User Auth
 app.use('/api', userRoute)
 
 // ---------------------------------------------------------------------------
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT
 
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {

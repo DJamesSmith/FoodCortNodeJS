@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
         cb(null, path.join(__dirname, '../../public/adminUploads'))
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + 'ADMIN' + path.extname(file.originalname))
+        cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname))
     }
 })
 

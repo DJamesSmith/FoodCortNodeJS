@@ -23,7 +23,7 @@
                                 <ol class="breadcrumb float-sm-right">
                                     <li class="breadcrumb-item"><a href="/admin"> Home </a></li>
                                     <li class="breadcrumb-item active"> Dashboard </li>
-                                    <li class="breadcrumb-item active"> Users </li>
+                                    <li class="breadcrumb-item active"> Product comments </li>
                                 </ol>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                     <div class="container mt-5">
 
                         <div class="d-flex justify-content-between">
-                            <a href="/admin/addUser"> <button type="button" class="btn btn-success mb-3"> Add New User </button> </a>
+                            <a href="/admin/addComment"> <button type="button" class="btn btn-success mb-3 disabled" disabled> Add New Comment (Disabled) </button> </a>
 
                             <nav aria-label="Page navigation example">
                                 <% if (count > 5) { %>
@@ -45,10 +45,6 @@
                                         <% } else { %>
                                             <li class="page-ite m"><a class="page-link" href="?page=<%= previousPage %>"> Previous </a></li>
                                         <% } %>
-
-                                        <!-- <% for (let i = 1; i <= totalPages; i++) { %>
-                                            <li class="page-item"><a class="page-link" href="?page=<%= i %>"> <%= i %> </a></li>
-                                        <% } %> -->
 
                                         <% for (let i = 1; i <= totalPages; i++) { %>
                                             <% if (i === parseInt(currentPage)) { %>
@@ -61,7 +57,7 @@
                                                 </li>
                                             <% } %>
                                         <% } %>
-                                        
+
                                         <% if (nextPage-1 == totalPages) { %>
                                             <li class="page-item disabled"><a class="page-link" href="?page=<%= nextPage %>"> Next </a></li>
                                         <% } else { %>
@@ -74,55 +70,57 @@
                             <!-- SEARCH FORM -->
                             <form>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" name="search" />
+                                    <input type="text" class="form-control" placeholder="Search comment" aria-label="Search" aria-describedby="button-addon2" name="search" />
                                 </div>
                             </form>
                         </div>
+
+                        <% if (message.length > 0) {%> 
+                            <div class="alert alert-primary">
+                              <%- message %>
+                            </div>
+                        <% } %>
 
                         <table class="table table-dark table-striped text-center mb-5">
                             <thead>
                                 <tr>
                                     <th scope="col"> # </th>
-                                    <th scope="col"> Image </th>
-                                    <th scope="col"> First Name </th>
-                                    <th scope="col"> Last Name </th>
-                                    <th scope="col"> Contact </th>
-                                    <th scope="col"> Password (Encrypted) </th>
-                                    <th scope="col"> Password (Decrypted) </th>
-                                    <th scope="col"> Status </th>
+                                    <th scope="col"></th>
+                                    <th scope="col"> Product Title </th>
+                                    <th scope="col"> User </th>
+                                    <th scope="col"> Comment </th>
                                     <th colspan="2"> Action </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <% let c = 0 %>
-                                <% if (displaydata.length > 0) { %>
-                                <% for (let user of displaydata) { if (user.type != 0) { %>
-                                <% const p = user.id %>
-                                <% const passEncrypt = user.password %>
-                                <% const passDecrypt = user.decryptedPassword %>
-                                <tr>
-                                    <td scope="row"> <%= ++c %> </td>
-                                    <td> <img src="/userUploads/<%=user.profile_pic%>" style="border-radius: 50%;" alt="" height="50" width="50"> </td>
-                                    <td> <%= user.first_name %> </td>
-                                    <td> <%= user.last_name %> </td>
-                                    <td> <%= user.contact %> </td>
-                                    <td> <%= passEncrypt.substring(0, 5) %>  ...  <%= passEncrypt.substring(55, 60) %> </td>
-                                    <td> <%= passDecrypt %> </td>
-                                    <% if (user.status) { %>
-                                    <td> <a href="/admin/deactivateUser/<%= user._id %>" class="btn btn-danger"> Deactivate </a> </td>
-                                    <% } else { %>
-                                    <td> <a href="/admin/activateUser/<%= user._id %>" class="btn btn-success"> Activate </a> </td>
-                                    <% } %>
-                                    <td> <a href="/admin/editUser/<%= user._id %>"> <button type="button" class="btn btn-outline-primary"> Edit </button> </a> </td>
-                                    <td> <a href="/admin/deleteUser/<%= user._id %>"> <button class="btn btn-outline-danger"> Delete </button> </a> </td>
-                                </tr>
-                                <% } } } else { %>
-                                <tr>
-                                    <td colspan="8"> No data found </td>
-                                </tr>
+                                <% if (comments.length > 0) { %>
+                                    <% comments.forEach((comment, index) => { %>
+                                        <tr>
+                                            <td scope="row"><%= index + 1 %></td>
+                                            <% if (comment.product) { %>
+                                                <td><img src="/productUploads/<%= comment.product.image_product %>" style="border-radius: 50%;" alt="" height="50" width="50"></td>
+                                                <td><%= comment.product.productTitle %></td>
+                                            <% } else { %>
+                                                <td colspan="2">Product details not available</td>
+                                            <% } %>
+                                            <% if (comment.user) { %>
+                                                <td><%= comment.user.first_name %> <%= comment.user.last_name %></td>
+                                            <% } else { %>
+                                                <td>User details not available</td>
+                                            <% } %>
+                                            <td><%= comment.comment %></td>
+                                            <td><a href="/admin/editComment/<%= comment._id %>"><button type="button" class="btn btn-outline-primary">Edit</button></a></td>
+                                            <td><a href="/admin/comment/<%= comment._id %>"><button class="btn btn-outline-danger">Delete</button></a></td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7">No data found</td>
+                                    </tr>
                                 <% } %>
-                            </tbody>
+                            </tbody>                            
+
                         </table>
                         <p class="btn btn-outline-primary disabled"> Page <%= currentPage %> of <%= count %> entries </p>
 
