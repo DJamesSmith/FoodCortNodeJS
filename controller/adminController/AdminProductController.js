@@ -123,8 +123,8 @@ exports.createProduct = async (req, res) => {
             productQuantity: 10,
             initialProductQuantity: 0,
             image_product: image_product,
-            category: category,
             image_original_name: req.file ? req.file.originalname : '',
+            category: category,
         })
 
         const cat = await Category.findById(category).select('categoryName')

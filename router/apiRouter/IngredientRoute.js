@@ -7,17 +7,17 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const auth = require('../../middleware/auth')
 
-const commentController = require('../../controller/apiController/CommentController')
+const ingredientController = require('../../controller/apiController/IngredientController')
 
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 // -------------------------- Multer --------------------------
-// D:\React Native\FinalProject\server\public\productUploads
+// // D:\React Native\FinalProject\server\public\ingredientUploads
 // const storage = multer.diskStorage({
 //     destination: (req, file, cb) => {
-//         const destinationPath = path.join(__dirname, '../', 'public/productUploads')
+//         const destinationPath = path.join(__dirname, '../', 'public/ingredientUploads')
 
-//         console.log("Product_Storage_Path:", destinationPath)
+//         console.log("ExtraIngredient_Storage_Path:", destinationPath)
 //         cb(null, destinationPath)
 //     },
 //     filename: (req, file, cb) => {
@@ -42,17 +42,10 @@ router.use(bodyParser.urlencoded({ extended: true }))
 
 // -------------------------- Multer --------------------------
 
+// GET - All Ingredients
+router.get('/product/:productId/ingredients', auth, ingredientController.allIngredientsForProduct)
 
-// GET - All Comments (Particular Product)
-router.get('/product/:productId/comments', auth, commentController.allCommentsForProduct)
-
-// POST - Comment
-router.post('/comment', auth, commentController.createComment)
-
-// PUT
-router.post('/comment/:commentId', auth, commentController.updateComment)
-
-// DELETE
-router.get('/comment/:commentId', auth, commentController.deleteComment)
+// POST - Add Ingredient ("State change" with number of items)
+// router.get('/addIngredient', ingredientController.createIngredient)
 
 module.exports = router

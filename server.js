@@ -34,6 +34,7 @@ app.set('views', path.join(__dirname, 'views/admin'))
 app.use(express.static(path.join(__dirname, 'public/admin')))
 app.use(express.static(path.join(__dirname, 'public/adminUploads')))
 app.use(express.static(path.join(__dirname, 'public/productUploads')))
+app.use(express.static(path.join(__dirname, 'public/ingredientUploads')))
 app.use(express.static(path.join(__dirname, 'public/userUploads')))
 
 // Use BodyParser for GET data from form body
@@ -81,6 +82,12 @@ const adminProductRoute = require('./router/templateRouter/AdminProductRouter') 
 app.use('/admin', adminProductRoute)
 const productRoute = require('./router/apiRouter/ProductRoute')                          // For User fetch All Products
 app.use('/api', productRoute)
+
+// Extra-Ingredients
+const adminIngredientRoute = require('./router/templateRouter/AdminIngredientRouter')          // For Admin: GET, POST, PUT, DELETE
+app.use('/admin', adminIngredientRoute)
+const ingredientRoute = require('./router/apiRouter/IngredientRoute')                          // For User: GET, POST (maybe)
+app.use('/api', ingredientRoute)
 
 // Comment
 const adminCommentRoute = require('./router/templateRouter/AdminCommentRouter')          // For Admin: GET, PUT, DELETE

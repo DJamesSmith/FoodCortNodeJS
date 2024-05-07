@@ -7,7 +7,7 @@ const extraIngredient = new mongoose.Schema({
         required: true
     },
     ingredientPrice: {
-        type: String,
+        type: Number,
         required: true
     },
     ingredientWeight: {
@@ -15,14 +15,14 @@ const extraIngredient = new mongoose.Schema({
         required: true
     },
     ingredientQuantity: {
-        type: String,
+        type: Number,
         required: true
     },
     initialIngredientQuantity: {
-        type: String,
+        type: Number,
         required: true
     },
-    image_ExtraIngredient: {
+    image_ingredient: {
         type: String,
         required: false
     },

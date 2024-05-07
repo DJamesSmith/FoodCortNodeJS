@@ -23,7 +23,7 @@
                                 <ol class="breadcrumb float-sm-right">
                                     <li class="breadcrumb-item"><a href="/admin"> Home </a></li>
                                     <li class="breadcrumb-item active"> Dashboard </li>
-                                    <li class="breadcrumb-item active"> Food Products </li>
+                                    <li class="breadcrumb-item active"> Extra Ingredients </li>
                                 </ol>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                     <div class="container mt-5">
 
                         <div class="d-flex justify-content-between">
-                            <a href="/admin/addProduct"> <button type="button" class="btn btn-success mb-3"> Add New Food Product </button> </a>
+                            <a href="/admin/addIngredient"> <button type="button" class="btn btn-success mb-3"> Add New ExtraIngredient </button> </a>
 
                             <nav aria-label="Page navigation example">
                                 <% if (count > 5) { %>
@@ -81,43 +81,56 @@
                             </div>
                         <% } %>
 
-                        <table class="table table-dark table-striped text-center mb-5">
+                        <table class="table table-dark table-borderless text-center mb-5">
                             <thead>
                                 <tr>
                                     <th scope="col"> # </th>
-                                    <th scope="col"> Image </th>
-                                    <th scope="col"> Category </th>
-                                    <th scope="col"> Title </th>
-                                    <th scope="col"> Description </th>
-                                    <th scope="col"> Price </th>
+                                    <th scope="col"> Product </th>
+                                    <th scope="col"> Extra Ingredients </th>
+                                    <th scope="col"> Ingredient Price </th>
+                                    <th scope="col"> Ingredient Weight </th>
                                     <th colspan="2"> Action </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <% let c = 1 %>
-                                <% if (displaydata.length > 0) { %>
-                                    <% for (let product of displaydata) { %>
-                                    <% const description = product.productDescription %>
-                                        <tr>
-                                            <td scope="row"> <%= c++ %> </td>
-                                            <td> <img src="/productUploads/<%= product.image_product %>" style="border-radius: 50%;" alt="" height="50" width="50"> </td>
-                                            <td> <%= product.category.categoryName %> </td>
-                                            <td> <%= product.productTitle %> </td>
-                                            <td> <%= description.substring(0, 40) %>... </td>
-                                            <td> <%= product.productPrice %> </td>
-
-                                            <td> <a href="/admin/editProduct/<%= product._id %>"> <button type="button" class="btn btn-outline-primary"> Edit </button> </a> </td>
-                                            <td> <a href="/admin/products/<%= product._id %>"> <button class="btn btn-outline-danger"> Delete </button> </a> </td>
-                                        </tr>
-                                    <% } %>
+                                <% if (ingredient.length > 0) { %>
+                                    <% let productGroups = {} %>
+                                    <% ingredient.forEach(item => { %>
+                                        <% const productTitle = item.product.productTitle %>
+                                        <% if (!productGroups[productTitle]) { %>
+                                            <% productGroups[productTitle] = [] %>
+                                        <% } %>
+                                        <% productGroups[productTitle].push(item) %>
+                                    <% }) %>
+                            
+                                    <% // Sort product groups alphabetically by product title %>
+                                    <% const sortedProductGroups = Object.keys(productGroups).sort((a, b) => a.localeCompare(b)) %>
+                            
+                                    <% sortedProductGroups.forEach(productTitle => { %>
+                                        <% const ingredients = productGroups[productTitle] %>
+                                        <% ingredients.forEach((ingredient, index) => { %>
+                                            <tr>
+                                                <td scope="row"><%= index + 1 %></td>
+                                                <% if (index === 0) { %>
+                                                    <td rowspan="<%= ingredients.length %>"><%= ingredient.product.productTitle %></td>
+                                                <% } %>
+                                                <td><%= ingredient.ingredientName %></td>
+                                                <td><%= ingredient.ingredientPrice %></td>
+                                                <td><%= ingredient.ingredientWeight %></td>
+                                                <td><a href="/admin/editIngredient/<%= ingredient._id %>"><button type="button" class="btn btn-outline-primary">Edit</button></a></td>
+                                                <td><a href="/admin/ingredient/<%= ingredient._id %>"><button class="btn btn-outline-danger">Delete</button></a></td>
+                                            </tr>
+                                        <% }) %>
+                                    <% }) %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="10"> No data found </td>
+                                        <td colspan="6">No data found</td>
                                     </tr>
                                 <% } %>
                             </tbody>
-                            
+
+
                         </table>
                         <p class="btn btn-outline-primary disabled"> Page <%= currentPage %> of <%= count %> entries </p>
 

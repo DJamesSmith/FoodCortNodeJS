@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<%-include("../common/header.ejs")%>
+
+    <body>
+        <div class="wrapper">
+            <%-include("../common/navbar.ejs")%>
+            <%-include("../common/sidebar.ejs")%>
+
+            <div class="content-wrapper">
+
+                <div class="content-header">
+                    <div class="container-fluid">
+
+                        <div class="row mb-2 mt-5">
+                            <div class="col-sm-6">
+                                <h1 class="m-0 text-dark">
+                                    <%=dashboardtitle%>
+                                </h1>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                                    <li class="breadcrumb-item active">Dashboard</li>
+                                    <li class="breadcrumb-item active"> Add Extra Ingredient </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+
+                    <% if (typeof error !== 'undefined' && error.length > 0) {%> 
+                        <div class="alert alert-danger">
+                            <%= error %>
+                        </div>
+                    <% } %>
+
+                    <div class="container mt-5 pb-5">
+                        <h1 class="text-center mb-4"> Add New Extra Ingredient </h1>
+
+                        <% if (message.length > 0) {%> 
+                            <div class="alert alert-primary">
+                              <%- message %>
+                            </div>
+                        <% } %>
+
+                        <form action="/admin/createIngredient" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="inputState">Product</label>
+                                <select id="inputState" class="form-control" name="product">
+                                    <option disabled selected>Select Product</option>
+                                    <% ingredients.forEach(product => { %>
+                                        <option value="<%= product._id %>"> <%= product.productTitle %> </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="ingredientName" class="form-label">Name of the Ingredient</label>
+                                <input type="text" class="form-control" placeholder="Name of the extra ingredient" name="ingredientName" required>
+                            </div>
+
+                            <div class="form-group row pt-3">
+                                <div class="col">
+                                    <label for="ingredientPrice" class="form-label">Price</label>
+                                    <input type="text" class="form-control" placeholder="Enter price" id="ingredientPrice" name="ingredientPrice" required>
+                                </div>
+                                <div class="col">
+                                    <label for="ingredientWeight" class="form-label">Weight</label>
+                                    <input type="text" class="form-control" placeholder="Enter weight" id="ingredientWeight" name="ingredientWeight" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">Choose Image</label>
+                                <input class="form-control" type="file" id="formFile" name="image_ingredient" required>
+                            </div>
+                            <button type="submit" class="btn btn-success mt-5">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <%-include("../common/footer.ejs")%>
+        </div>
+        <%-include("../common/scripts.ejs")%>
+    </body>
+
+</html>

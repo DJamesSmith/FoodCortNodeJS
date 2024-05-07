@@ -81,7 +81,7 @@
                             </div>
                         <% } %>
 
-                        <table class="table table-dark table-striped text-center mb-5">
+                        <table class="table table-dark table-borderless mb-5">
                             <thead>
                                 <tr>
                                     <th scope="col"> # </th>
@@ -95,24 +95,36 @@
 
                             <tbody>
                                 <% if (comments.length > 0) { %>
+                                    <% let groupedComments = {} %>
                                     <% comments.forEach((comment, index) => { %>
-                                        <tr>
-                                            <td scope="row"><%= index + 1 %></td>
-                                            <% if (comment.product) { %>
-                                                <td><img src="/productUploads/<%= comment.product.image_product %>" style="border-radius: 50%;" alt="" height="50" width="50"></td>
-                                                <td><%= comment.product.productTitle %></td>
-                                            <% } else { %>
-                                                <td colspan="2">Product details not available</td>
-                                            <% } %>
-                                            <% if (comment.user) { %>
-                                                <td><%= comment.user.first_name %> <%= comment.user.last_name %></td>
-                                            <% } else { %>
-                                                <td>User details not available</td>
-                                            <% } %>
-                                            <td><%= comment.comment %></td>
-                                            <td><a href="/admin/editComment/<%= comment._id %>"><button type="button" class="btn btn-outline-primary">Edit</button></a></td>
-                                            <td><a href="/admin/comment/<%= comment._id %>"><button class="btn btn-outline-danger">Delete</button></a></td>
-                                        </tr>
+                                        <% const productTitle = comment.product ? comment.product.productTitle : "Product details not available" %>
+                                        <% if (!groupedComments[productTitle]) { %>
+                                            <% groupedComments[productTitle] = [] %>
+                                        <% } %>
+                                        <% groupedComments[productTitle].push(comment) %>
+                                    <% }) %>
+                                    
+                                    <% Object.keys(groupedComments).forEach((productTitle) => { %>
+                                        <% const comments = groupedComments[productTitle] %>
+                                        <% comments.forEach((comment, index) => { %>
+                                            <tr>
+                                                <td scope="row"><%= index + 1 %></td>
+                                                <% if (index === 0) { %>
+                                                    <td><img src="/productUploads/<%= comment.product.image_product %>" style="border-radius: 50%;" alt="" height="50" width="50"></td>
+                                                    <td rowspan="<%= comments.length %>"><%= productTitle %></td>
+                                                <% } else { %>
+                                                    <td></td>
+                                                <% } %>
+                                                <% if (comment.user) { %>
+                                                    <td><%= comment.user.first_name %> <%= comment.user.last_name %></td>
+                                                <% } else { %>
+                                                    <td>User details not available</td>
+                                                <% } %>
+                                                <td><%= comment.comment %></td>
+                                                <td><a href="/admin/editComment/<%= comment._id %>"><button type="button" class="btn btn-outline-primary">Edit</button></a></td>
+                                                <td><a href="/admin/comment/<%= comment._id %>"><button class="btn btn-outline-danger">Delete</button></a></td>
+                                            </tr>
+                                        <% }) %>
                                     <% }) %>
                                 <% } else { %>
                                     <tr>

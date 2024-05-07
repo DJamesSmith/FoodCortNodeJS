@@ -26,6 +26,7 @@ exports.allCommentsForProduct = async (req, res) => {
     }
 }
 
+// POST - New Comment
 exports.createComment = async (req, res) => {
     try {
         const { user, comment, product } = req.body
@@ -55,7 +56,62 @@ exports.createComment = async (req, res) => {
             res.status(404).send({ success: false, message: "User or product not found" })
         }
     } catch (error) {
-        console.error("Error creating comment:", error);
+        console.error("Error creating comment:", error)
+        res.status(500).send({ success: false, message: "Internal Server Error" })
+    }
+}
+
+// PUT - Update Existing Comment for Particular Product
+exports.updateComment = async (req, res) => {
+    try {
+        const { commentId } = req.params
+        const { comment } = req.body
+
+        const existingComment = await Comment.findByIdAndUpdate(
+            commentId,
+            { comment: comment },
+            { new: true }
+        )
+
+        if (existingComment) {
+            const productId = existingComment.product
+            const productDoc = await Product.findById(productId)
+
+            res.status(200).json({
+                success: true,
+                comment: existingComment,
+                productTitle: productDoc.productTitle,
+                message: `Comment updated successfully for product "${productDoc.productTitle}"`,
+            })
+        } else {
+            res.status(404).send({ success: false, message: "Comment not found" })
+        }
+    } catch (error) {
+        console.error("Error updating comment:", error)
+        res.status(500).send({ success: false, message: "Internal Server Error" })
+    }
+}
+
+// DELETE - Delete Comment for Particular Product
+exports.deleteComment = async (req, res) => {
+    try {
+        const { commentId } = req.params
+        const deletedComment = await Comment.findByIdAndDelete(commentId)
+
+        if (deletedComment) {
+            const productId = deletedComment.product
+            const productDoc = await Product.findById(productId)
+
+            res.status(200).json({
+                success: true,
+                comment: deletedComment,
+                message: `Comment "${deletedComment.comment.substring(0, 12)}..." deleted successfully for product "${productDoc.productTitle}"`,
+            })
+        } else {
+            res.status(404).send({ success: false, message: `Comment not found` })
+        }
+    } catch (error) {
+        console.error("Error deleting comment:", error)
         res.status(500).send({ success: false, message: "Internal Server Error" })
     }
 }
