@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer')
 
 const config = require('../config/config')
 const { User, passwordValidationMessages } = require('../model/User')
+const Address = require('../model/Address')
 const OTP = require('../model/OTP')
 const { imageToBase64 } = require('../utility/Base64Image')
 const client = twilio(config.twilio.accountSid, config.twilio.authToken, config.twilio.phoneNumber)
@@ -205,7 +206,7 @@ exports.register = async (req, res) => {
             status: true
         })
 
-        console.log(`userDataTemp: ${userDataTemp}`)
+        // console.log(`userDataTemp: ${userDataTemp}`)
 
         const otp = generateOTP()
         const isEmail = /^\S+@\S+\.\S+$/.test(contact)
@@ -371,6 +372,50 @@ exports.getProfileDetails = async (req, res) => {
     }
 }
 
+// User Update Profile
+exports.updateProfile = async (req, res) => {
+    try {
+        const userId = req.params.userId
+
+        const { first_name, last_name, contact, password } = req.body
+
+        let hashedPassword = ''
+        if (password) {
+            hashedPassword = await securePassword(password)
+        }
+
+        let profile_pic = ''
+        if (req.file) {
+            profile_pic = req.file.filename;
+            const filePath = `public/userUploads/${profile_pic}`
+            const base64Image = await imageToBase64(filePath)
+            profile_pic = base64Image
+        }
+
+        const updateFields = {
+            first_name: first_name,
+            last_name: last_name,
+            contact: contact,
+            password: hashedPassword,
+            decryptedPassword: password,
+            profile_pic: profile_pic,
+            profile_pic_originalname: req.file ? req.file.originalname : '',
+        }
+
+        Object.keys(updateFields).forEach(key => updateFields[key] === undefined && delete updateFields[key])
+        const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true })
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+
+        res.status(200).json({ success: true, message: `${first_name}'s profile updated successfully`, data: updatedUser })
+    } catch (error) {
+        console.error('Error updating profile:', error)
+        res.status(500).json({ success: false, message: 'Failed to update profile' })
+    }
+}
+
 // Determine SMS or Email, Generate OTP accordingly
 const otpdetermine = () => {
 
@@ -514,7 +559,6 @@ exports.logout = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' })
     }
 }
-
 
 
 // const blacklist = []

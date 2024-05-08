@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const passwordValidationMessages = {
     minLength: 'Password must be at least 6 characters long',
@@ -52,6 +53,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Your Password is required'],
     },
+    address: [{
+        type: Schema.Types.ObjectId,
+        ref: 'address'
+    }],
     profile_pic: {
         type: String,
         default: ''

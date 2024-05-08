@@ -106,6 +106,10 @@ app.use('/api', apiAdminUserRoute)
 const userRoute = require('./router/UserRouter')                                              // User Auth
 app.use('/api', userRoute)
 
+// Client-UserAddress
+const addressRoute = require('./router/apiRouter/AddressRoute')                               // User Address
+app.use('/api', addressRoute)
+
 // ---------------------------------------------------------------------------
 
 const port = process.env.PORT
