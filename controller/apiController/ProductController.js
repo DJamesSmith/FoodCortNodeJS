@@ -8,8 +8,8 @@ const Category = require('../../model/Category')
 // GET
 exports.allProducts = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1
-        const perPage = parseInt(req.query.perPage) || 10
+        const page = parseInt(req.query.page)
+        const perPage = parseInt(req.query.perPage)
         const searchQuery = req.query.search
 
         const skip = (page - 1) * perPage
