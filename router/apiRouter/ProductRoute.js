@@ -45,11 +45,13 @@ router.use(bodyParser.urlencoded({ extended: true }))
 // GET - All Products
 router.get('/products', productController.allProducts)
 
-
+// Add a product to a user's favorites
+router.post('/user/:userId/favorites/:productId', productController.addToFavorites)
+// Get all favorite products for a user
+router.get('/user/:userId/favorites', productController.getFavoriteProducts)
 
 // Add a product to a user's cart
 router.post('/user/:userId/cart/:productId', auth, productController.addToCart)
-
 // Get all cart items for a user
 router.get('/user/:userId/cart', auth, productController.getCartItems)
 
