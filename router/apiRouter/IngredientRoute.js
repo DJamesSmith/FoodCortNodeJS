@@ -5,7 +5,6 @@ const router = express.Router()
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const path = require('path')
-const auth = require('../../middleware/auth')
 
 const ingredientController = require('../../controller/apiController/IngredientController')
 
@@ -43,7 +42,7 @@ router.use(bodyParser.urlencoded({ extended: true }))
 // -------------------------- Multer --------------------------
 
 // GET - All Ingredients
-router.get('/product/:productId/ingredients', auth, ingredientController.allIngredientsForProduct)
+router.get('/product/:productId/ingredients', ingredientController.allIngredientsForProduct)
 
 // POST - Add Ingredient ("State change" with number of items)
 // router.get('/addIngredient', ingredientController.createIngredient)
