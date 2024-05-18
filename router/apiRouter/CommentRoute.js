@@ -55,4 +55,11 @@ router.post('/comment/:commentId', auth, commentController.updateComment)
 // DELETE
 router.get('/comment/:commentId', auth, commentController.deleteComment)
 
+
+
+
+// Toggle like on a comment
+router.post('/comment/:commentId/:userId', commentController.toggleLikeComment)
+
+
 module.exports = router

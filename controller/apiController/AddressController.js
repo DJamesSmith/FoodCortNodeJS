@@ -24,11 +24,14 @@ exports.allAddresses = async (req, res) => {
 exports.addAddress = async (req, res) => {
     try {
         const userId = req.params.userId
-        const { address } = req.body
+        const { address, addressType } = req.body
 
         const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
 
-        const newAddress = new Address({ user: userId, address })
+        const newAddress = new Address({ user: userId, address, addressType })
         await newAddress.save()
 
         res.status(200).json({ success: true, newAddress, message: `Address added successfully for ${user.first_name} ${user.last_name}` })
@@ -43,11 +46,11 @@ exports.updateAddress = async (req, res) => {
     try {
         const userId = req.params.userId
         const addressId = req.params.addressId
-        const { address } = req.body
+        const { address, addressType } = req.body
 
         const updatedAddress = await Address.findOneAndUpdate(
             { _id: addressId, user: userId },
-            { address },
+            { address, addressType },
             { new: true }
         )
         const user = await User.findById(userId)

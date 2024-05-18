@@ -117,7 +117,7 @@ exports.createProduct = async (req, res) => {
             productRating: productRating,
             productKiloCalories: productKiloCalories,
             productDeliveryTime: productDeliveryTime,
-            productIsLiked: 0,
+            productIsLiked: false,
             productLikesCount: 0,
             productUnlikesCount: 0,
             productQuantity: 10,
@@ -125,6 +125,9 @@ exports.createProduct = async (req, res) => {
             image_product: image_product,
             image_original_name: req.file ? req.file.originalname : '',
             category: category,
+            productIsAddedToCart: false,
+            productIsFavourite: false,
+            productIsOrdered: false
         })
 
         const cat = await Category.findById(category).select('categoryName')
@@ -240,6 +243,11 @@ exports.updateProduct = async (req, res) => {
         existingProduct.productDeliveryTime = productDeliveryTime
         existingProduct.image_product = image_product
         existingProduct.category = category
+
+        existingProduct.productIsLiked = false
+        existingProduct.productIsAddedToCart = false
+        existingProduct.productIsFavourite = false
+        existingProduct.productIsOrdered = false
 
         await existingProduct.save()
 

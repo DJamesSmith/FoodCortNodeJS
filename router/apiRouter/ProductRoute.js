@@ -46,4 +46,11 @@ router.use(bodyParser.urlencoded({ extended: true }))
 router.get('/products', productController.allProducts)
 
 
+
+// Add a product to a user's cart
+router.post('/user/:userId/cart/:productId', auth, productController.addToCart)
+
+// Get all cart items for a user
+router.get('/user/:userId/cart', auth, productController.getCartItems)
+
 module.exports = router

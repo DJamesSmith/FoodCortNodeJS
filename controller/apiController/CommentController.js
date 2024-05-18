@@ -115,3 +115,37 @@ exports.deleteComment = async (req, res) => {
         res.status(500).send({ success: false, message: "Internal Server Error" })
     }
 }
+
+// Toggle Like on a Comment
+exports.toggleLikeComment = async (req, res) => {
+    try {
+        const { commentId, userId } = req.params
+
+        const comment = await Comment.findById(commentId)
+        if (!comment) {
+            return res.status(404).json({ success: false, message: 'Comment not found' })
+        }
+
+        const likedIndex = comment.likedBy.indexOf(userId)
+        let message = ''
+
+        if (likedIndex === -1) {
+            // User has not liked the comment yet
+            comment.likedBy.push(userId)
+            comment.likesCount = (comment.likesCount || 0) + 1
+            message = 'Comment liked successfully'
+        } else {
+            // User has already liked the comment, so unlike it
+            comment.likedBy.splice(likedIndex, 1)
+            comment.likesCount = Math.max((comment.likesCount || 1) - 1, 0)
+            message = 'Comment unliked successfully'
+        }
+
+        await comment.save()
+
+        res.status(200).json({ success: true, message, comment })
+    } catch (error) {
+        console.error("Error toggling like on comment:", error)
+        res.status(500).json({ success: false, message: "Internal Server Error" })
+    }
+}

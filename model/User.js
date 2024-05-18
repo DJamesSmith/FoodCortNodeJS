@@ -53,10 +53,6 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Your Password is required'],
     },
-    address: [{
-        type: Schema.Types.ObjectId,
-        ref: 'address'
-    }],
     profile_pic: {
         type: String,
         default: ''
@@ -64,7 +60,23 @@ const userSchema = mongoose.Schema({
     profile_pic_originalname: {
         type: String,
         default: ''
-    }
+    },
+    address: [{
+        type: Schema.Types.ObjectId,
+        ref: 'address'
+    }],
+    favouriteProducts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'product'
+    }],
+    likedComments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'comment'
+    }],
+    productCart: [{
+        type: Schema.Types.ObjectId,
+        ref: 'product'
+    }],
 }, {
     timestamps: true        // Automatically gives us a createdAt and updatedAt fields
 })

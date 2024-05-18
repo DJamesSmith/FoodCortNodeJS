@@ -59,3 +59,44 @@ exports.allProducts = async (req, res) => {
         res.status(400).send({ success: false, message: error })
     }
 }
+
+// POST - Add to cart
+exports.addToCart = async (req, res) => {
+    try {
+        const { userId, productId } = req.params
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+
+        if (user.productCart.includes(productId)) {
+            return res.status(400).json({ success: false, message: 'Product already in cart' })
+        }
+
+        user.productCart.push(productId)
+        await user.save()
+
+        res.status(200).json({ success: true, message: 'Product added to cart', cart: user.productCart })
+    } catch (error) {
+        console.error('Error adding product to cart:', error)
+        res.status(500).json({ success: false, message: 'Internal Server Error' })
+    }
+}
+
+// GET all cart items
+exports.getCartItems = async (req, res) => {
+    try {
+        const { userId } = req.params
+
+        const user = await User.findById(userId).populate('productCart')
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+
+        res.status(200).json({ success: true, message: 'Cart items fetched successfully', cart: user.productCart })
+    } catch (error) {
+        console.error('Error fetching cart items:', error)
+        res.status(500).json({ success: false, message: 'Internal Server Error' })
+    }
+}

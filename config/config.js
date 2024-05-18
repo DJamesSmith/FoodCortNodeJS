@@ -1,9 +1,10 @@
 const config = {
     secret_jwt: "thisismysecretkey",
     twilio: {
-        accountSid: "ACe095ce7039b0081e63cfed066fe31b2a",
-        authToken: "aacea7f781699fbf7064026b01f9aa27",
-        phoneNumber: "+12184801832"
+        accountSid: "AC2e94c5630035aa7fc6ffdf1e2b395d9e",
+        authToken: "75e326db5b16ea7dfe7b3b2dde1d04ba",
+        phoneNumber: "+14067197686"
+        // dionmanipal@gmail.com
     },
     otpExpirationDuration: 180000,       // 3 minutes in milliseconds
     otpResendTime: 1.5,

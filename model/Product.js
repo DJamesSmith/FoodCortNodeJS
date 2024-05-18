@@ -27,12 +27,24 @@ const product = new mongoose.Schema({
         required: true
     },
     productIsLiked: {
-        type: String,
+        type: Boolean,
         required: true
     },
     productLikesCount: {
         type: Number,
         default: 0
+    },
+    productIsAddedToCart: {
+        type: Boolean,
+        required: true
+    },
+    productIsFavourite: {
+        type: Boolean,
+        required: true
+    },
+    productIsOrdered: {
+        type: Boolean,
+        required: true
     },
     productUnlikesCount: {
         type: Number,
@@ -69,10 +81,6 @@ const product = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'category'
     },
-    // extraingredient: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'extraingredient'
-    // },
 },
     {
         timestamps: true        // Automatically gives us a createdAt and updatedAt fields

@@ -6,10 +6,15 @@ const addressSchema = mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    addressType: {
+        type: String,
+        required: true,
+        enum: ['Home', 'Workplace', 'School/University', 'Gym', 'Park', 'Other']
+    },
     address: {
         type: String,
         trim: true
-    }
+    },
 }, {
     timestamps: true        // Automatically gives us createdAt and updatedAt fields
 })

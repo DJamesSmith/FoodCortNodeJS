@@ -11,11 +11,19 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    likesCount: {
+        type: Number,
+        required: true
+    },
     product: {
         type: Schema.Types.ObjectId,
         ref: 'product',
         required: true
-    }
+    },
+    likedBy: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
 }, {
     timestamps: true
 })
