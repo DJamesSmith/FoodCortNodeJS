@@ -27,41 +27,6 @@ exports.allCommentsForProduct = async (req, res) => {
 }
 
 // POST - New Comment
-// exports.createComment = async (req, res) => {
-//     try {
-//         const { user, comment, product } = req.body
-
-//         const userDoc = await User.findById(user)
-//         const productDoc = await Product.findById(product)
-
-//         if (userDoc && productDoc) {
-//             console.log("User:", userDoc.first_name)
-//             console.log("Product:", productDoc.productTitle)
-
-//             const newComment = new Comment({
-//                 user: user,
-//                 comment: comment,
-//                 product: product,
-//             })
-
-//             await newComment.save()
-
-//             res.status(201).send({
-//                 success: true,
-//                 status: 200,
-//                 comment: newComment,
-//                 message: `Comment added successfully for product ${productDoc.productTitle}`,
-//             })
-//         } else {
-//             res.status(404).send({ success: false, message: "User or product not found" })
-//         }
-//     } catch (error) {
-//         console.error("Error creating comment:", error)
-//         res.status(500).send({ success: false, message: "Internal Server Error" })
-//     }
-// }
-
-// POST - New Comment
 exports.createComment = async (req, res) => {
     try {
         const { user, comment, product } = req.body
