@@ -164,10 +164,22 @@ exports.removeFromCart = async (req, res) => {
             return res.status(400).json({ success: false, status: 400, message: 'Product not found in cart' })
         }
 
+        const product = await Product.findById(productId)
+        if (!product) {
+            return res.status(404).json({ success: false, status: 404, message: 'Product not found' })
+        }
+
         user.productCart.splice(productIndex, 1)
         await user.save()
 
-        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s product removed from cart`, cart: user.productCart })
+        res.status(200).json({
+            success: true,
+            status: 200,
+            message: `${user.first_name} ${user.last_name}'s product removed from cart`,
+            removedProduct: { id: product._id, productTitle: product.productTitle },
+            cart: user.productCart
+        })
+
     } catch (error) {
         console.error('Error removing product from cart:', error)
         res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
