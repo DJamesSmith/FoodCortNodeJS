@@ -11,18 +11,18 @@ exports.allCommentsForProduct = async (req, res) => {
         const product = await Product.findById(productId)
 
         if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'Product not found' })
         }
 
         const comments = await Comment.find({ product: productId })
         if (comments.length == 0) {
-            res.status(200).json({ success: true, comments: comments, message: `No comments for product "${product.productTitle}"` })
+            res.status(200).json({ success: true, status: 200, comments: comments, message: `No comments for product "${product.productTitle}"` })
         } else {
-            res.status(200).json({ success: true, comments: comments, message: `All comments for product "${product.productTitle}"` })
+            res.status(200).json({ success: true, status: 200, comments: comments, message: `All comments for product "${product.productTitle}"` })
         }
     } catch (error) {
         console.error("Error fetching comments:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" })
+        res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
     }
 }
 
@@ -49,16 +49,16 @@ exports.createComment = async (req, res) => {
 
             res.status(201).send({
                 success: true,
-                status: 200,
+                status: 201,
                 comment: newComment,
                 message: `Comment added successfully for product ${productDoc.productTitle}`,
             })
         } else {
-            res.status(404).send({ success: false, message: "User or product not found" })
+            res.status(404).send({ success: false, status: 404, message: "User or product not found" })
         }
     } catch (error) {
         console.error("Error creating comment:", error)
-        res.status(500).send({ success: false, message: "Internal Server Error" })
+        res.status(500).send({ success: false, status: 500, message: "Internal Server Error" })
     }
 }
 
@@ -81,16 +81,17 @@ exports.updateComment = async (req, res) => {
 
             res.status(200).json({
                 success: true,
+                status: 200,
                 comment: existingComment,
                 productTitle: productDoc.productTitle,
                 message: `Comment updated successfully for product "${productDoc.productTitle}"`,
             })
         } else {
-            res.status(404).send({ success: false, message: "Comment not found" })
+            res.status(404).send({ success: false, status: 404, message: "Comment not found" })
         }
     } catch (error) {
         console.error("Error updating comment:", error)
-        res.status(500).send({ success: false, message: "Internal Server Error" })
+        res.status(500).send({ success: false, status: 500, message: "Internal Server Error" })
     }
 }
 
@@ -125,7 +126,7 @@ exports.toggleLikeComment = async (req, res) => {
 
         const comment = await Comment.findById(commentId)
         if (!comment) {
-            return res.status(404).json({ success: false, message: 'Comment not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'Comment not found' })
         }
 
         const likedIndex = comment.likedBy.indexOf(userId)
@@ -145,9 +146,9 @@ exports.toggleLikeComment = async (req, res) => {
 
         await comment.save()
 
-        res.status(200).json({ success: true, message, comment })
+        res.status(200).json({ success: true, status: 200, message, comment })
     } catch (error) {
         console.error("Error toggling like on comment:", error)
-        res.status(500).json({ success: false, message: "Internal Server Error" })
+        res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
     }
 }

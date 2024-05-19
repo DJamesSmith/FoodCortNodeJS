@@ -10,13 +10,13 @@ exports.allAddresses = async (req, res) => {
 
         if (addresses.length > 0) {
             const { first_name, last_name } = addresses[0].user
-            res.status(200).json({ success: true, addresses, message: `All addresses for ${first_name + ' ' + last_name} successfully fetched.` })
+            res.status(200).json({ success: true, status: 200, addresses, message: `All addresses for ${first_name + ' ' + last_name} successfully fetched.` })
         } else if (addresses.length === 0) {
-            res.status(200).json({ success: true, addresses, message: `Address list is empty.` })
+            res.status(404).json({ success: true, status: 404, addresses, message: `Address list is empty.` })
         }
     } catch (error) {
         console.error('Error fetching addresses:', error)
-        res.status(500).json({ success: false, message: 'Failed to fetch addresses' })
+        res.status(500).json({ success: false, status: 500, message: 'Failed to fetch addresses' })
     }
 }
 
@@ -28,16 +28,16 @@ exports.addAddress = async (req, res) => {
 
         const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
         const newAddress = new Address({ user: userId, address, addressType })
         await newAddress.save()
 
-        res.status(200).json({ success: true, newAddress, message: `Address added successfully for ${user.first_name} ${user.last_name}` })
+        res.status(201).json({ success: true, status: 201, newAddress, message: `Address added successfully for ${user.first_name} ${user.last_name}` })
     } catch (error) {
         console.error('Error adding address:', error)
-        res.status(500).json({ success: false, message: 'Failed to add address' })
+        res.status(500).json({ success: false, status: 500, message: 'Failed to add address' })
     }
 }
 
@@ -56,13 +56,13 @@ exports.updateAddress = async (req, res) => {
         const user = await User.findById(userId)
 
         if (!updatedAddress) {
-            return res.status(404).json({ success: false, message: `Address not found for the user ${user.first_name} ${user.last_name}` })
+            return res.status(404).json({ success: false, status: 404, message: `Address not found for the user ${user.first_name} ${user.last_name}` })
         }
 
-        res.status(200).json({ success: true, updatedAddress, message: `Address updated successfully for ${user.first_name} ${user.last_name}` })
+        res.status(200).json({ success: true, status: 200, updatedAddress, message: `Address updated successfully for ${user.first_name} ${user.last_name}` })
     } catch (error) {
         console.error('Error updating address:', error)
-        res.status(500).json({ success: false, message: 'Failed to update address' })
+        res.status(500).json({ success: false, status: 500, message: 'Failed to update address' })
     }
 }
 
@@ -73,19 +73,19 @@ exports.deleteAddress = async (req, res) => {
         const address = await Address.findById(addressId)
 
         if (!address) {
-            return res.status(404).json({ success: false, message: 'Address not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'Address not found' })
         }
 
         const user = await User.findById(address.user)
         const deletedAddress = await Address.findByIdAndDelete(addressId)
 
         if (deletedAddress) {
-            res.status(200).json({ success: true, deletedAddress, message: `Address for ${user.first_name} ${user.last_name} deleted successfully` })
+            res.status(200).json({ success: true, status: 200, deletedAddress, message: `Address for ${user.first_name} ${user.last_name} deleted successfully` })
         } else {
-            res.status(404).json({ success: false, message: 'Address not found' })
+            res.status(404).json({ success: false, status: 404, message: 'Address not found' })
         }
     } catch (error) {
         console.error('Error deleting address:', error)
-        res.status(500).json({ success: false, message: 'Failed to delete address' })
+        res.status(500).json({ success: false, status: 500, message: 'Failed to delete address' })
     }
 }

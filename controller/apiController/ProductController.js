@@ -67,20 +67,20 @@ exports.addToCart = async (req, res) => {
 
         const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
         if (user.productCart.includes(productId)) {
-            return res.status(400).json({ success: false, message: 'Product already in cart' })
+            return res.status(400).json({ success: false, status: 400, message: 'Product already in cart' })
         }
 
         user.productCart.push(productId)
         await user.save()
 
-        res.status(200).json({ success: true, message: `${user.first_name} ${user.last_name}'s product added to cart`, cart: user.productCart })
+        res.status(200).json({ success: true, status: 400, message: `${user.first_name} ${user.last_name}'s product added to cart`, cart: user.productCart })
     } catch (error) {
         console.error('Error adding product to cart:', error)
-        res.status(500).json({ success: false, message: 'Internal Server Error' })
+        res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
     }
 }
 
@@ -91,20 +91,21 @@ exports.getCartItems = async (req, res) => {
 
         const user = await User.findById(userId).populate('productCart')
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
         const cartItemsCount = user.productCart.length
 
         res.status(200).json({
             success: true,
+            status: 200,
             message: `${user.first_name} ${user.last_name}'s cart items fetched successfully`,
             cart: user.productCart,
             cartItemsCount: cartItemsCount
         })
     } catch (error) {
         console.error('Error fetching cart items:', error)
-        res.status(500).json({ success: false, message: 'Internal Server Error' })
+        res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
     }
 }
 
@@ -114,20 +115,20 @@ exports.addToFavorites = async (req, res) => {
 
         const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
         if (user.favouriteProducts.includes(productId)) {
-            return res.status(400).json({ success: false, message: 'Product already in favorites' })
+            return res.status(400).json({ success: false, status: 400, message: 'Product already in favorites' })
         }
 
         user.favouriteProducts.push(productId)
         await user.save()
 
-        res.status(200).json({ success: true, message: `${user.first_name} ${user.last_name}'s product added to favorites`, favorites: user.favouriteProducts })
+        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s product added to favorites`, favorites: user.favouriteProducts })
     } catch (error) {
         console.error('Error adding product to favorites:', error)
-        res.status(500).json({ success: false, message: 'Internal Server Error' })
+        res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
     }
 }
 
@@ -138,12 +139,37 @@ exports.getFavoriteProducts = async (req, res) => {
 
         const user = await User.findById(userId).populate('favouriteProducts')
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' })
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
-        res.status(200).json({ success: true, message: `${user.first_name} ${user.last_name}'s favorite products fetched successfully`, favorites: user.favouriteProducts })
+        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s favorite products fetched successfully`, favorites: user.favouriteProducts })
     } catch (error) {
         console.error('Error fetching favorite products:', error)
-        res.status(500).json({ success: false, message: 'Internal Server Error' })
+        res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
+    }
+}
+
+// POST - Remove from cart
+exports.removeFromCart = async (req, res) => {
+    try {
+        const { userId, productId } = req.params
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
+        }
+
+        const productIndex = user.productCart.indexOf(productId)
+        if (productIndex === -1) {
+            return res.status(400).json({ success: false, status: 400, message: 'Product not found in cart' })
+        }
+
+        user.productCart.splice(productIndex, 1)
+        await user.save()
+
+        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s product removed from cart`, cart: user.productCart })
+    } catch (error) {
+        console.error('Error removing product from cart:', error)
+        res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
     }
 }

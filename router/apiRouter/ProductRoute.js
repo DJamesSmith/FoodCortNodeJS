@@ -54,5 +54,7 @@ router.get('/user/:userId/favorites', productController.getFavoriteProducts)
 router.post('/user/:userId/cart/:productId', auth, productController.addToCart)
 // Get all cart items for a user
 router.get('/user/:userId/cart', auth, productController.getCartItems)
+// Remove a product from a user's cart
+router.delete('/user/:userId/cart/:productId', auth, productController.removeFromCart)
 
 module.exports = router
