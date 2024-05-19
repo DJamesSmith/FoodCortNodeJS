@@ -44,7 +44,4 @@ router.use(bodyParser.urlencoded({ extended: true }))
 // GET - All Ingredients
 router.get('/product/:productId/ingredients', ingredientController.allIngredientsForProduct)
 
-// POST - Add Ingredient ("State change" with number of items)
-// router.get('/addIngredient', ingredientController.createIngredient)
-
 module.exports = router

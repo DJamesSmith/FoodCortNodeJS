@@ -94,13 +94,19 @@ exports.getCartItems = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
 
-        res.status(200).json({ success: true, message: `${user.first_name} ${user.last_name}'s cart items fetched successfully`, cart: user.productCart })
+        const cartItemsCount = user.productCart.length
+
+        res.status(200).json({
+            success: true,
+            message: `${user.first_name} ${user.last_name}'s cart items fetched successfully`,
+            cart: user.productCart,
+            cartItemsCount: cartItemsCount
+        })
     } catch (error) {
         console.error('Error fetching cart items:', error)
         res.status(500).json({ success: false, message: 'Internal Server Error' })
     }
 }
-
 
 exports.addToFavorites = async (req, res) => {
     try {
