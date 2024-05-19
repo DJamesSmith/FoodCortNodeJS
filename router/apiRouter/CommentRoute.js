@@ -50,12 +50,12 @@ router.get('/product/:productId/comments', auth, commentController.allCommentsFo
 router.post('/comment', auth, commentController.createComment)
 
 // PUT
-router.post('/comment/:commentId', auth, commentController.updateComment)
+router.put('/comment/:commentId', auth, commentController.updateComment)
 
 // DELETE
-router.get('/comment/:commentId', auth, commentController.deleteComment)
+router.delete('/comment/:commentId', auth, commentController.deleteComment)
 
 // Toggle like on a comment
-router.post('/comment/:commentId/:userId', commentController.toggleLikeComment)
+router.patch('/comment/:commentId', auth, commentController.toggleLikeComment)
 
 module.exports = router

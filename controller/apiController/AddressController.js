@@ -4,7 +4,7 @@ const { User } = require('../../model/User')
 // GET - Get all addresses for a particular User
 exports.allAddresses = async (req, res) => {
     try {
-        const userId = req.params.userId
+        const userId = req.user._id
         const addresses = await Address.find({ user: userId })
             .populate('user', 'first_name last_name')
 
@@ -23,7 +23,7 @@ exports.allAddresses = async (req, res) => {
 // POST - Add an address for a particular User
 exports.addAddress = async (req, res) => {
     try {
-        const userId = req.params.userId
+        const userId = req.user._id
         const { address, addressType } = req.body
 
         const user = await User.findById(userId)
@@ -44,7 +44,7 @@ exports.addAddress = async (req, res) => {
 // PUT - Update an address for a particular User
 exports.updateAddress = async (req, res) => {
     try {
-        const userId = req.params.userId
+        const userId = req.user._id
         const addressId = req.params.addressId
         const { address, addressType } = req.body
 

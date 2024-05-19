@@ -29,9 +29,10 @@ exports.allCommentsForProduct = async (req, res) => {
 // POST - New Comment
 exports.createComment = async (req, res) => {
     try {
-        const { user, comment, product } = req.body
+        const userId = req.user._id
+        const { comment, product } = req.body
 
-        const userDoc = await User.findById(user)
+        const userDoc = await User.findById(userId)
         const productDoc = await Product.findById(product)
 
         if (userDoc && productDoc) {
@@ -39,7 +40,7 @@ exports.createComment = async (req, res) => {
             console.log("Product:", productDoc.productTitle)
 
             const newComment = new Comment({
-                user: user,
+                user: userId,
                 comment: comment,
                 product: product,
                 likesCount: 0
@@ -51,7 +52,7 @@ exports.createComment = async (req, res) => {
                 success: true,
                 status: 201,
                 comment: newComment,
-                message: `Comment added successfully for product ${productDoc.productTitle}`,
+                message: `${userDoc.first_name} ${userDoc.last_name} added a comment successfully for product ${productDoc.productTitle}`,
             })
         } else {
             res.status(404).send({ success: false, status: 404, message: "User or product not found" })
@@ -66,8 +67,11 @@ exports.createComment = async (req, res) => {
 // PUT - Update Existing Comment for Particular Product
 exports.updateComment = async (req, res) => {
     try {
+        const userId = req.user._id
         const { commentId } = req.params
         const { comment } = req.body
+
+        const userDoc = await User.findById(userId)
 
         const existingComment = await Comment.findByIdAndUpdate(
             commentId,
@@ -84,7 +88,7 @@ exports.updateComment = async (req, res) => {
                 status: 200,
                 comment: existingComment,
                 productTitle: productDoc.productTitle,
-                message: `Comment updated successfully for product "${productDoc.productTitle}"`,
+                message: `${userDoc.first_name} ${userDoc.last_name} updated a comment successfully for product "${productDoc.productTitle}"`,
             })
         } else {
             res.status(404).send({ success: false, status: 404, message: "Comment not found" })
@@ -98,8 +102,11 @@ exports.updateComment = async (req, res) => {
 // DELETE - Delete Comment for Particular Product
 exports.deleteComment = async (req, res) => {
     try {
+        const userId = req.user._id
         const { commentId } = req.params
         const deletedComment = await Comment.findByIdAndDelete(commentId)
+
+        const userDoc = await User.findById(userId)
 
         if (deletedComment) {
             const productId = deletedComment.product
@@ -108,7 +115,7 @@ exports.deleteComment = async (req, res) => {
             res.status(200).json({
                 success: true,
                 comment: deletedComment,
-                message: `Comment "${deletedComment.comment.substring(0, 12)}..." deleted successfully for product "${productDoc.productTitle}"`,
+                message: `${userDoc.first_name} ${userDoc.last_name} deleted a comment "${deletedComment.comment.substring(0, 12)}..." successfully for product "${productDoc.productTitle}"`,
             })
         } else {
             res.status(404).send({ success: false, message: `Comment not found` })
@@ -122,7 +129,8 @@ exports.deleteComment = async (req, res) => {
 // Toggle Like on a Comment
 exports.toggleLikeComment = async (req, res) => {
     try {
-        const { commentId, userId } = req.params
+        const userId = req.user._id
+        const { commentId } = req.params
 
         const comment = await Comment.findById(commentId)
         if (!comment) {
@@ -133,7 +141,6 @@ exports.toggleLikeComment = async (req, res) => {
         let message = ''
 
         if (likedIndex === -1) {
-            // User has not liked the comment yet
             comment.likedBy.push(userId)
             comment.likesCount = (comment.likesCount || 0) + 1
             message = 'Comment liked successfully'

@@ -46,17 +46,17 @@ router.use(bodyParser.urlencoded({ extended: true }))
 router.get('/products', productController.allProducts)
 
 // Get all Cart Products
-router.get('/user/:userId/cart', auth, productController.getCartItems)
+router.get('/user/cart', auth, productController.getCartItems)
 // Add to Cart
-router.post('/user/:userId/cart/:productId', auth, productController.addToCart)
+router.post('/user/cart/:productId', auth, productController.addToCart)
 // Remove from Cart
-router.delete('/user/:userId/cart/:productId', auth, productController.removeFromCart)
+router.delete('/user/cart/:productId', auth, productController.removeFromCart)
 
 // Get all Favorite Products
-router.get('/user/:userId/favorites', auth, productController.getFavoriteProducts)
+router.get('/user/favorites', auth, productController.getFavoriteProducts)
 // Add Favorite
-router.post('/user/:userId/favorites/:productId', auth, productController.addToFavorites)
+router.post('/user/favorites/:productId', auth, productController.addToFavorites)
 // Remove from Favorites
-router.delete('/user/:userId/favorites/:productId', auth, productController.removeFromFavorites)
+router.delete('/user/favorites/:productId', auth, productController.removeFromFavorites)
 
 module.exports = router

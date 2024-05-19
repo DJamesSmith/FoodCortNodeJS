@@ -43,7 +43,7 @@ router.post('/user/login', userController.login)
 router.post('/user/login-validate', auth, userController.loginValidate)
 router.get('/user/profile-details', auth, userController.getProfileDetails)
 
-router.post('/user/editprofile/:userId', auth, upload.single('profile_pic'), userController.updateProfile)
+router.put('/user/editprofile', auth, upload.single('profile_pic'), userController.updateProfile)
 
 router.post('/user/forgotpassword', userController.forgotPassword)
 router.post('/user/validate-otp', auth, userController.validateOTP)

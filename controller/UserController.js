@@ -357,10 +357,7 @@ exports.loginValidate = async (req, res) => {
 exports.getProfileDetails = async (req, res) => {
     try {
         const userId = req.user._id
-        // const userDetails = await User.findOne({ userId })
         const userDetails = await User.findById(userId)
-
-        // console.log(`userDetails: ${userDetails}`)
 
         if (!userDetails) {
             return res.status(404).json({ message: 'User details not found' })
@@ -375,7 +372,7 @@ exports.getProfileDetails = async (req, res) => {
 // User Update Profile
 exports.updateProfile = async (req, res) => {
     try {
-        const userId = req.params.userId
+        const userId = req.user._id
 
         const { first_name, last_name, contact, password } = req.body
 

@@ -63,7 +63,8 @@ exports.allProducts = async (req, res) => {
 // POST - Add to cart
 exports.addToCart = async (req, res) => {
     try {
-        const { userId, productId } = req.params
+        const userId = req.user._id
+        const { productId } = req.params
 
         const user = await User.findById(userId)
         if (!user) {
@@ -87,7 +88,7 @@ exports.addToCart = async (req, res) => {
 // GET all Cart items
 exports.getCartItems = async (req, res) => {
     try {
-        const { userId } = req.params
+        const userId = req.user._id
 
         const user = await User.findById(userId).populate('productCart')
         if (!user) {
@@ -112,7 +113,8 @@ exports.getCartItems = async (req, res) => {
 // POST - Remove from cart
 exports.removeFromCart = async (req, res) => {
     try {
-        const { userId, productId } = req.params
+        const userId = req.user._id
+        const { productId } = req.params
 
         const user = await User.findById(userId)
         if (!user) {
@@ -149,7 +151,8 @@ exports.removeFromCart = async (req, res) => {
 // POST - Add Favourite
 exports.addToFavorites = async (req, res) => {
     try {
-        const { userId, productId } = req.params
+        const userId = req.user._id
+        const { productId } = req.params
 
         const user = await User.findById(userId)
         if (!user) {
@@ -173,7 +176,7 @@ exports.addToFavorites = async (req, res) => {
 // Get all Favorite Products
 exports.getFavoriteProducts = async (req, res) => {
     try {
-        const { userId } = req.params
+        const userId = req.user._id
 
         const user = await User.findById(userId).populate('favouriteProducts')
         if (!user) {
@@ -190,7 +193,8 @@ exports.getFavoriteProducts = async (req, res) => {
 // POST - Remove from Favorites
 exports.removeFromFavorites = async (req, res) => {
     try {
-        const { userId, productId } = req.params
+        const userId = req.user._id
+        const { productId } = req.params
 
         const user = await User.findById(userId)
         if (!user) {
