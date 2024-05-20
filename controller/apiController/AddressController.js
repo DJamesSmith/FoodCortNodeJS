@@ -6,11 +6,17 @@ exports.allAddresses = async (req, res) => {
     try {
         const userId = req.user._id
         const addresses = await Address.find({ user: userId })
-            .populate('user', 'first_name last_name')
+            .populate('user', 'first_name last_name contact')
 
         if (addresses.length > 0) {
             const { first_name, last_name } = addresses[0].user
-            res.status(200).json({ success: true, status: 200, addresses, message: `All addresses for ${first_name + ' ' + last_name} successfully fetched.` })
+            res.status(200).json({
+                success: true,
+                status: 200,
+                addresses,
+                contact,
+                message: `All addresses for ${first_name + ' ' + last_name} successfully fetched.`
+            })
         } else if (addresses.length === 0) {
             res.status(404).json({ success: true, status: 404, addresses, message: `Address list is empty.` })
         }
