@@ -24,14 +24,18 @@ exports.allAddresses = async (req, res) => {
 exports.addAddress = async (req, res) => {
     try {
         const userId = req.user._id
-        const { address, addressType } = req.body
+        const { address, addressType, isDefault } = req.body
 
         const user = await User.findById(userId)
         if (!user) {
             return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
-        const newAddress = new Address({ user: userId, address, addressType })
+        if (isDefault) {
+            await Address.updateMany({ user: userId, isDefault: true }, { isDefault: false })
+        }
+
+        const newAddress = new Address({ user: userId, address, addressType, isDefault })
         await newAddress.save()
 
         res.status(201).json({ success: true, status: 201, newAddress, message: `Address added successfully for ${user.first_name} ${user.last_name}` })
@@ -46,11 +50,15 @@ exports.updateAddress = async (req, res) => {
     try {
         const userId = req.user._id
         const addressId = req.params.addressId
-        const { address, addressType } = req.body
+        const { address, addressType, isDefault } = req.body
+
+        if (isDefault) {
+            await Address.updateMany({ user: userId, isDefault: true }, { isDefault: false })
+        }
 
         const updatedAddress = await Address.findOneAndUpdate(
             { _id: addressId, user: userId },
-            { address, addressType },
+            { address, addressType, isDefault },
             { new: true }
         )
         const user = await User.findById(userId)
@@ -87,5 +95,30 @@ exports.deleteAddress = async (req, res) => {
     } catch (error) {
         console.error('Error deleting address:', error)
         res.status(500).json({ success: false, status: 500, message: 'Failed to delete address' })
+    }
+}
+
+// PUT - Set an address as default for a User
+exports.setDefaultAddress = async (req, res) => {
+    try {
+        const userId = req.user._id
+        const addressId = req.params.addressId
+
+        await Address.updateMany({ user: userId, isDefault: true }, { isDefault: false })
+
+        const defaultAddress = await Address.findOneAndUpdate(
+            { _id: addressId, user: userId },
+            { isDefault: true },
+            { new: true }
+        )
+
+        if (!defaultAddress) {
+            return res.status(404).json({ success: false, status: 404, message: 'Address not found' })
+        }
+
+        res.status(200).json({ success: true, status: 200, defaultAddress, message: 'Default address set successfully' })
+    } catch (error) {
+        console.error('Error setting default address:', error)
+        res.status(500).json({ success: false, status: 500, message: 'Failed to set default address' })
     }
 }

@@ -20,4 +20,7 @@ router.put('/user/address/:addressId', auth, addressController.updateAddress)
 // DELETE - Delete a particular address of a User
 router.delete('/user/address/:addressId', auth, addressController.deleteAddress)
 
+// PATCH - Set an address as default for a User
+router.patch('/user/address/:addressId/default', auth, addressController.setDefaultAddress)
+
 module.exports = router
