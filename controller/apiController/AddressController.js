@@ -31,6 +31,11 @@ exports.addAddress = async (req, res) => {
             return res.status(404).json({ success: false, status: 404, message: 'User not found' })
         }
 
+        const existingAddress = await Address.findOne({ user: userId, address })
+        if (existingAddress) {
+            return res.status(400).json({ success: false, status: 400, message: 'Address already exists' })
+        }
+
         if (isDefault) {
             await Address.updateMany({ user: userId, isDefault: true }, { isDefault: false })
         }
