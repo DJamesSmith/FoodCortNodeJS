@@ -14,7 +14,6 @@ exports.allAddresses = async (req, res) => {
                 success: true,
                 status: 200,
                 addresses,
-                contact,
                 message: `All addresses for ${first_name + ' ' + last_name} successfully fetched.`
             })
         } else if (addresses.length === 0) {
