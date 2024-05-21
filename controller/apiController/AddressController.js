@@ -17,7 +17,7 @@ exports.allAddresses = async (req, res) => {
                 message: `All addresses for ${first_name + ' ' + last_name} successfully fetched.`
             })
         } else if (addresses.length === 0) {
-            res.status(404).json({ success: true, status: 404, addresses, message: `Address list is empty.` })
+            res.status(200).json({ success: true, status: 200, addresses, message: `Address list is empty.` })
         }
     } catch (error) {
         console.error('Error fetching addresses:', error)
