@@ -130,7 +130,7 @@ exports.removeFromCart = async (req, res) => {
         res.status(200).json({
             success: true,
             status: 200,
-            message: `${user.first_name} ${user.last_name}'s product removed from cart`,
+            message: `"${product.productTitle}" removed from cart`,
             removedProduct: { id: product._id, productTitle: product.productTitle },
             cart: user.productCart
         })
@@ -156,10 +156,15 @@ exports.addToFavorites = async (req, res) => {
             return res.status(200).json({ success: false, status: 200, message: 'Product already in favorites' })
         }
 
+        const product = await Product.findById(productId)
+        if (!product) {
+            return res.status(404).json({ success: false, status: 404, message: 'Product not found' })
+        }
+
         user.favouriteProducts.push(productId)
         await user.save()
 
-        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s product added to favorites`, favorites: user.favouriteProducts })
+        res.status(200).json({ success: true, status: 200, message: `"${product.productTitle}" added to favorites`, favorites: user.favouriteProducts })
     } catch (error) {
         console.error('Error adding product to favorites:', error)
         res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
@@ -210,7 +215,7 @@ exports.removeFromFavorites = async (req, res) => {
         res.status(200).json({
             success: true,
             status: 200,
-            message: `${user.first_name} ${user.last_name}'s product removed from favorites`,
+            message: `"${product.productTitle}" removed from favorites`,
             removedProduct: { id: product._id, productTitle: product.productTitle },
             favorites: user.favouriteProducts
         })
