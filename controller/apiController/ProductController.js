@@ -11,52 +11,25 @@ exports.allProducts = async (req, res) => {
         const page = parseInt(req.query.page)
         const perPage = parseInt(req.query.perPage)
         const searchQuery = req.query.search
-        const minPrice = parseInt(req.query.minPrice)
-        const maxPrice = parseInt(req.query.maxPrice)
 
         const skip = (page - 1) * perPage
+        let query = {}
 
-        const pipeline = [
-            {
-                $match: {
-                    $or: [
-                        { productTitle: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
-                        { productDescription: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
-                    ],
-                    productPrice: { $gte: minPrice, $lte: maxPrice }
-                },
-            },
-            {
-                $lookup: {
-                    from: 'comments',
-                    localField: 'comment',
-                    foreignField: '_id',
-                    as: 'comments',
-                },
-            },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'category',
-                    foreignField: '_id',
-                    as: 'category',
-                },
-            },
-            {
-                $facet: {
-                    products: [
-                        { $skip: skip },
-                        { $limit: perPage },
-                    ],
-                    totalRecords: [{ $count: 'count' }],
-                },
-            },
-        ]
+        if (searchQuery) {
+            query = {
+                $or: [
+                    { productTitle: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
+                    { productDescription: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
+                ]
+            }
+        }
 
-        const result = await Product.aggregate(pipeline)
-
-        const products = result[0].products
-        const totalRecords = result[0].totalRecords[0] ? result[0].totalRecords[0].count : 0
+        const totalRecords = await Product.countDocuments(query)
+        const products = await Product.find(query)
+            .skip(skip)
+            .limit(perPage)
+            .populate('comment')
+        
         const totalPages = Math.ceil(totalRecords / perPage)
 
         res.status(200).json({
