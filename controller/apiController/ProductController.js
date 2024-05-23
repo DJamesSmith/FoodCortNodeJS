@@ -11,50 +11,65 @@ exports.allProducts = async (req, res) => {
         const page = parseInt(req.query.page)
         const perPage = parseInt(req.query.perPage)
         const searchQuery = req.query.search
+        const minPrice = parseInt(req.query.minPrice)
+        const maxPrice = parseInt(req.query.maxPrice)
 
         const skip = (page - 1) * perPage
-        let query = {}
 
-        if (searchQuery) {
-            query = {
-                $or: [
-                    { productTitle: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
-                    { productDescription: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
-                ]
-            }
-        }
+        const pipeline = [
+            {
+                $match: {
+                    $or: [
+                        { productTitle: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
+                        { productDescription: { $regex: '.*' + searchQuery + '.*', $options: 'i' } },
+                    ],
+                    productPrice: { $gte: minPrice, $lte: maxPrice }
+                },
+            },
+            {
+                $lookup: {
+                    from: 'comments',
+                    localField: 'comment',
+                    foreignField: '_id',
+                    as: 'comments',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'category',
+                },
+            },
+            {
+                $facet: {
+                    products: [
+                        { $skip: skip },
+                        { $limit: perPage },
+                    ],
+                    totalRecords: [{ $count: 'count' }],
+                },
+            },
+        ]
 
-        const totalRecords = await Product.countDocuments(query)
-        const products = await Product.find(query)
-            .skip(skip)
-            .limit(perPage)
-            .populate('comment')
+        const result = await Product.aggregate(pipeline)
 
+        const products = result[0].products
+        const totalRecords = result[0].totalRecords[0] ? result[0].totalRecords[0].count : 0
         const totalPages = Math.ceil(totalRecords / perPage)
 
-        if (products.length == 0) {
-            res.status(200).send({
-                success: true,
-                status: 200,
-                data: products,
-                currentPage: page,
-                perPage: perPage,
-                totalPages: totalPages,
-                totalRecords: totalRecords,
-                message: `Product list empty.`
-            })
-        } else {
-            res.status(200).send({
-                success: true,
-                status: 200,
-                data: products,
-                currentPage: page,
-                perPage: perPage,
-                totalPages: totalPages,
-                totalRecords: totalRecords,
-                message: `Product list fetched successfully`
-            })
-        }
+        res.status(200).json({
+            success: true,
+            status: 200,
+            data: products,
+            currentPage: page,
+            perPage: perPage,
+            totalPages: totalPages,
+            totalRecords: totalRecords,
+            message: products.length === 0 ? 'Product list empty.' : 'Product list fetched successfully',
+        })
+
     } catch (error) {
         res.status(400).send({ success: false, message: error })
     }
@@ -72,13 +87,13 @@ exports.addToCart = async (req, res) => {
         }
 
         if (user.productCart.includes(productId)) {
-            return res.status(400).json({ success: false, status: 400, message: 'Product already in cart' })
+            return res.status(200).json({ success: false, status: 200, message: 'Product already in cart' })
         }
 
         user.productCart.push(productId)
         await user.save()
 
-        res.status(200).json({ success: true, status: 400, message: `${user.first_name} ${user.last_name}'s product added to cart`, cart: user.productCart })
+        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s product added to cart`, cart: user.productCart })
     } catch (error) {
         console.error('Error adding product to cart:', error)
         res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
@@ -123,7 +138,7 @@ exports.removeFromCart = async (req, res) => {
 
         const productIndex = user.productCart.indexOf(productId)
         if (productIndex === -1) {
-            return res.status(400).json({ success: false, status: 400, message: 'Product not found in cart' })
+            return res.status(200).json({ success: false, status: 200, message: 'Product not found in cart' })
         }
 
         const product = await Product.findById(productId)
@@ -160,7 +175,7 @@ exports.addToFavorites = async (req, res) => {
         }
 
         if (user.favouriteProducts.includes(productId)) {
-            return res.status(400).json({ success: false, status: 400, message: 'Product already in favorites' })
+            return res.status(200).json({ success: false, status: 200, message: 'Product already in favorites' })
         }
 
         user.favouriteProducts.push(productId)
@@ -203,12 +218,12 @@ exports.removeFromFavorites = async (req, res) => {
 
         const favoriteIndex = user.favouriteProducts.indexOf(productId)
         if (favoriteIndex === -1) {
-            return res.status(400).json({ success: false, status: 400, message: 'Product not found in favorites' })
+            return res.status(200).json({ success: false, status: 200, message: 'Product not found in favorites' })
         }
 
         const product = await Product.findById(productId)
         if (!product) {
-            return res.status(404).json({ success: false, status: 404, message: 'Product not found' })
+            return res.status(200).json({ success: false, status: 200, message: 'Product not found' })
         }
 
         user.favouriteProducts.splice(favoriteIndex, 1)
