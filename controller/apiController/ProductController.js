@@ -29,7 +29,7 @@ exports.allProducts = async (req, res) => {
             .skip(skip)
             .limit(perPage)
             .populate('comment')
-        
+
         const totalPages = Math.ceil(totalRecords / perPage)
 
         res.status(200).json({
@@ -63,10 +63,15 @@ exports.addToCart = async (req, res) => {
             return res.status(200).json({ success: false, status: 200, message: 'Product already in cart' })
         }
 
+        const product = await Product.findById(productId)
+        if (!product) {
+            return res.status(404).json({ success: false, status: 404, message: 'Product not found' })
+        }
+
         user.productCart.push(productId)
         await user.save()
 
-        res.status(200).json({ success: true, status: 200, message: `${user.first_name} ${user.last_name}'s product added to cart`, cart: user.productCart })
+        res.status(200).json({ success: true, status: 200, message: `"${product.productTitle}" added to your cart`, cart: user.productCart })
     } catch (error) {
         console.error('Error adding product to cart:', error)
         res.status(500).json({ success: false, status: 500, message: 'Internal Server Error' })
