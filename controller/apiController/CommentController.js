@@ -198,7 +198,7 @@ exports.getAllLikedCommentsForProduct = async (req, res) => {
             likedBy: comment.likedBy
         }))
 
-        res.status(200).json({ success: true, status: 200, comments: commentsWithLikes })
+        res.status(200).json({ success: true, status: 200, allLikedComments: commentsWithLikes })
     } catch (error) {
         console.error("Error fetching liked comments for product:", error)
         res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
