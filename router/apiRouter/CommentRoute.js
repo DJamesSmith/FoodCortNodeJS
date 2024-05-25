@@ -61,7 +61,7 @@ router.patch('/comment/:commentId/like', auth, commentController.likeComment)
 // Unlike a comment
 router.patch('/comment/:commentId/unlike', auth, commentController.unlikeComment)
 
-// Get all liked comments for a user
-router.get('/comments/liked', auth, commentController.getAllLikedComments)
+// Get all liked comments for a product
+router.get('/product/:productId/comments/liked', auth, commentController.getAllLikedCommentsForProduct)
 
 module.exports = router

@@ -1,5 +1,3 @@
-// API: User can fetch details only. Require aggregate, populate, pagination.
-
 const Product = require('../../model/Product')
 const { User } = require('../../model/User')
 const Comment = require('../../model/Comment')
@@ -181,16 +179,28 @@ exports.unlikeComment = async (req, res) => {
     }
 }
 
-// Get All Liked Comments for a User
-exports.getAllLikedComments = async (req, res) => {
+// Get All Liked Comments for a Particular Product
+exports.getAllLikedCommentsForProduct = async (req, res) => {
     try {
         const userId = req.user._id
+        const productId = req.params.productId
 
-        const likedComments = await Comment.find({ likedBy: userId })
+        const likedComments = await Comment.find({
+            product: productId,
+            likedBy: userId
+        })
 
-        res.status(200).json({ success: true, status: 200, likedComments })
+        const commentsWithLikes = likedComments.map(comment => ({
+            _id: comment._id,
+            comment: comment.comment,
+            product: comment.product,
+            likesCount: comment.likesCount,
+            likedBy: comment.likedBy
+        }))
+
+        res.status(200).json({ success: true, status: 200, comments: commentsWithLikes })
     } catch (error) {
-        console.error("Error fetching liked comments:", error)
+        console.error("Error fetching liked comments for product:", error)
         res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
     }
 }
