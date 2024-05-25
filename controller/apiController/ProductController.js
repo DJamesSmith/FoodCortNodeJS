@@ -130,7 +130,7 @@ exports.removeFromCart = async (req, res) => {
         res.status(200).json({
             success: true,
             status: 200,
-            message: `"${product.productTitle}" removed from cart`,
+            message: `"${product.productTitle}" removed from your cart`,
             removedProduct: { id: product._id, productTitle: product.productTitle },
             cart: user.productCart
         })

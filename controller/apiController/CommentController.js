@@ -126,8 +126,35 @@ exports.deleteComment = async (req, res) => {
     }
 }
 
-// Toggle Like on a Comment
-exports.toggleLikeComment = async (req, res) => {
+// Like a Comment
+exports.likeComment = async (req, res) => {
+    try {
+        const userId = req.user._id
+        const { commentId } = req.params
+
+        const comment = await Comment.findById(commentId)
+        if (!comment) {
+            return res.status(404).json({ success: false, status: 404, message: 'Comment not found' })
+        }
+
+        if (comment.likedBy.includes(userId)) {
+            return res.status(400).json({ success: false, status: 400, message: 'Comment already liked' })
+        }
+
+        comment.likedBy.push(userId)
+        comment.likesCount = (comment.likesCount || 0) + 1
+
+        await comment.save()
+
+        res.status(200).json({ success: true, status: 200, message: 'Comment liked successfully', comment })
+    } catch (error) {
+        console.error("Error liking comment:", error)
+        res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
+    }
+}
+
+// Unlike a Comment
+exports.unlikeComment = async (req, res) => {
     try {
         const userId = req.user._id
         const { commentId } = req.params
@@ -138,24 +165,32 @@ exports.toggleLikeComment = async (req, res) => {
         }
 
         const likedIndex = comment.likedBy.indexOf(userId)
-        let message = ''
-
         if (likedIndex === -1) {
-            comment.likedBy.push(userId)
-            comment.likesCount = (comment.likesCount || 0) + 1
-            message = 'Comment liked successfully'
-        } else {
-            // User has already liked the comment, so unlike it
-            comment.likedBy.splice(likedIndex, 1)
-            comment.likesCount = Math.max((comment.likesCount || 1) - 1, 0)
-            message = 'Comment unliked successfully'
+            return res.status(400).json({ success: false, status: 400, message: 'Comment not liked yet' })
         }
+
+        comment.likedBy.splice(likedIndex, 1)
+        comment.likesCount = Math.max((comment.likesCount || 1) - 1, 0)
 
         await comment.save()
 
-        res.status(200).json({ success: true, status: 200, message, comment })
+        res.status(200).json({ success: true, status: 200, message: 'Comment unliked successfully', comment })
     } catch (error) {
-        console.error("Error toggling like on comment:", error)
+        console.error("Error unliking comment:", error)
+        res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
+    }
+}
+
+// Get All Liked Comments for a User
+exports.getAllLikedComments = async (req, res) => {
+    try {
+        const userId = req.user._id
+
+        const likedComments = await Comment.find({ likedBy: userId })
+
+        res.status(200).json({ success: true, status: 200, likedComments })
+    } catch (error) {
+        console.error("Error fetching liked comments:", error)
         res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
     }
 }

@@ -55,7 +55,13 @@ router.put('/comment/:commentId', auth, commentController.updateComment)
 // DELETE
 router.delete('/comment/:commentId', auth, commentController.deleteComment)
 
-// Toggle like on a comment
-router.patch('/comment/:commentId', auth, commentController.toggleLikeComment)
+// Like a comment
+router.patch('/comment/:commentId/like', auth, commentController.likeComment)
+
+// Unlike a comment
+router.patch('/comment/:commentId/unlike', auth, commentController.unlikeComment)
+
+// Get all liked comments for a user
+router.get('/comments/liked', auth, commentController.getAllLikedComments)
 
 module.exports = router
