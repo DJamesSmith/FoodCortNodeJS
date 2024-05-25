@@ -136,7 +136,7 @@ exports.likeComment = async (req, res) => {
         }
 
         if (comment.likedBy.includes(userId)) {
-            return res.status(400).json({ success: false, status: 400, message: 'Comment already liked' })
+            return res.status(200).json({ success: false, status: 200, message: 'Comment already liked' })
         }
 
         comment.likedBy.push(userId)
@@ -164,7 +164,7 @@ exports.unlikeComment = async (req, res) => {
 
         const likedIndex = comment.likedBy.indexOf(userId)
         if (likedIndex === -1) {
-            return res.status(400).json({ success: false, status: 400, message: 'Comment not liked yet' })
+            return res.status(200).json({ success: false, status: 200, message: 'Comment not liked yet' })
         }
 
         comment.likedBy.splice(likedIndex, 1)
@@ -198,7 +198,7 @@ exports.getAllLikedCommentsForProduct = async (req, res) => {
             likedBy: comment.likedBy
         }))
 
-        res.status(200).json({ success: true, status: 200, allLikedComments: commentsWithLikes })
+        res.status(200).json({ success: true, status: 200, likedComments: commentsWithLikes })
     } catch (error) {
         console.error("Error fetching liked comments for product:", error)
         res.status(500).json({ success: false, status: 500, message: "Internal Server Error" })
