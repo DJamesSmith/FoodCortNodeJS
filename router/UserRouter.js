@@ -11,12 +11,9 @@ router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 // -------------------------- Multer --------------------------
 
-// Define static folder 
 router.use(express.static('public'))
 
-// Use multer diskStorage for file upload
 const storage = multer.diskStorage({
-    // User_Storage_Path: D:\React Native\FinalProject\server\public\userUploads
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname, `../public/userUploads`), function (error, success) {
             if (error) throw error
@@ -31,7 +28,6 @@ const storage = multer.diskStorage({
     }
 })
 
-// Define uploaded storage path
 const upload = multer({ storage: storage })
 
 // -------------------------- Multer --------------------------
@@ -49,7 +45,6 @@ router.post('/user/forgotpassword', userController.forgotPassword)
 router.post('/user/validate-otp', auth, userController.validateOTP)
 router.post('/user/updatepassword', auth, userController.updatePassword)
 
-router.get('/user/resendOTP', auth, userController.resendOTP)
-router.post('/user/logout', auth, userController.logout)
+router.put('/user/change-password', auth, userController.changePassword)
 
 module.exports = router

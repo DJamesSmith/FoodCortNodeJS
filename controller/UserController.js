@@ -539,54 +539,56 @@ exports.updatePassword = async (req, res) => {
     }
 }
 
-// Resend OTP
-exports.resendOTP = async (req, res) => {
+// PUT - Change Password
+exports.changePassword = async (req, res) => {
     try {
+        const userId = req.user._id
+        const { oldPassword, newPassword, confirmPassword } = req.body
 
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            return res.status(400).json({ success: false, status: 400, message: 'All fields are required' })
+        }
+
+        const user = await User.findOne({ userId })
+        if (!user) {
+            return res.status(404).json({ success: false, status: 404, message: 'User not found' })
+        }
+
+        const isMatch = await bcryptjs.compare(oldPassword, user.password)
+        if (!isMatch) {
+            return res.status(400).json({ success: false, status: 400, message: 'Old password is incorrect' })
+        }
+
+        const isSameAsOldPassword = await bcryptjs.compare(newPassword, user.password)
+        if (isSameAsOldPassword) {
+            return res.status(400).json({ success: false, status: 400, message: 'New password cannot be the same as the old password' })
+        }
+
+        const errors = []
+        validatePassword(errors, newPassword)
+        if (errors.length > 0) {
+            return res.status(400).json({ success: false, status: 400, message: errors.join('\n') })
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ success: false, status: 400, message: 'New passwords do not match' })
+        }
+
+        const hashedPassword = await bcryptjs.hash(newPassword, 10)
+        user.password = hashedPassword
+        user.decryptedPassword = newPassword
+
+        const userDetails = {
+            name: `${user.first_name + ' ' + user.last_name}`,
+            contact: user.contact,
+            password: user.decryptedPassword
+        }
+
+        await user.save()
+
+        res.status(200).json({ success: true, status: 200, user: userDetails, message: 'Password changed successfully.' })
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' })
+        console.error('Error in changePassword:', error)
+        res.status(500).json({ success: false, message: 'Internal server error' })
     }
 }
-
-// Logout
-exports.logout = async (req, res) => {
-    try {
-
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error' })
-    }
-}
-
-
-// const blacklist = []
-
-// // Logout
-// exports.logout = async (req, res) => {
-//     try {
-//         // Get the JWT token from the request header
-//         const token = req.headers.authorization.split(' ')[1]
-
-//         // Add the token to the blacklist
-//         blacklist.push(token)
-
-//         res.status(200).json({ success: true, status: 200, message: 'Logged out successfully' })
-//     } catch (error) {
-//         console.error('Error in logout:', error);
-//         res.status(500).json({ success: false, status: 500, message: 'Internal server error' })
-//     }
-// }
-
-// // Middleware to check if token is blacklisted
-// exports.checkToken = (req, res, next) => {
-//     const token = req.headers.authorization.split(' ')[1]
-//     if (blacklist.includes(token)) {
-//         return res.status(401).json({ success: false, status: 401, message: 'Unauthorized. Token blacklisted.' })
-//     }
-//     next()
-// }
-
-
-
-// No, hitting the logout API itself won't directly expire the token. In a stateless JWT-based authentication system, the token itself doesn't have an inherent mechanism to be invalidated upon logout. Instead, you invalidate the token on the server side by using techniques like token blacklisting, as mentioned earlier.
-// When a user logs out and you add their token to the blacklist, subsequent requests made with that token will be rejected. However, the token itself doesn't change or become invalid automatically.
-// So, hitting the logout API will mark the token as invalid for future requests, but it won't immediately expire or invalidate the token itself. The token will still be valid until its expiration time unless it's used again after being blacklisted.
